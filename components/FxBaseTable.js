@@ -49,6 +49,7 @@ export default class FxBaseTable extends LitElement {
 				margin: 10px;
 				border: 1px solid black;
 				position: relative;
+				var(--title-size: 1.5em);
 			}
 			#container {
 				display: flex;
@@ -68,6 +69,9 @@ export default class FxBaseTable extends LitElement {
 				position: absolute;
 				top: 0;
 				right: 0;
+			}
+			h2{
+				font-size: var(--title-size);
 			}
 		`;
 

@@ -1,4 +1,4 @@
-import { LitElement, html } from 'https://cdn.skypack.dev/lit-element';
+import { LitElement, html, css } from 'https://cdn.skypack.dev/lit-element';
 
 // import the task from CDN
 import { Task } from 'https://cdn.skypack.dev/@lit-labs/task';
@@ -9,6 +9,7 @@ import { XmlToHtml } from '../utilities/XsltHelper.js'
 // import sub components
 import '../components/FxBaseTable.js';
 import '../components/FxBaseTableDetail.js';
+import '../components/FxField.js';
 
 export default class TablePage extends LitElement {
 
@@ -25,6 +26,26 @@ export default class TablePage extends LitElement {
 			fragment: { type: Object },
 		}
 
+	}
+
+	static get styles() { 
+		return css`
+			:host {
+				display: block;
+				padding: 10px;
+				margin: 10px;
+				border: 1px solid black;
+				position: relative;
+				var(--title-size: 1.5rem);
+			}
+			fx-base-table {
+				var(--title-size: 1rem);
+			}
+			fx-base-table-detail {
+				var(--title-size: 1rem);
+			}
+		
+		`;
 	}
 
 
@@ -58,11 +79,12 @@ export default class TablePage extends LitElement {
 			this.appendChild(baseTableElement);
 
 			// get the fields
-			const [fragment, count, fieldCatalog] = this.getFields(xml, baseTable);
-			baseTableElement.fieldCount = count;
-			baseTableElement.fieldCatalog = fieldCatalog;
+			const uuid = baseTable.querySelector('UUID').textContent;
+			const xpath = `//FieldCatalog/BaseTableReference[@UUID='${uuid}']/following-sibling::ObjectList/@membercount`;
+			baseTableElement.fieldCount = xml.evaluate(xpath, xml, null, XPathResult.NUMBER_TYPE, null).numberValue;
 
 			if (this.id) {
+				const [fragment] = this.getFields(xml, baseTable);
 				baseTableElement.append(fragment)
 			}
 
@@ -91,8 +113,8 @@ export default class TablePage extends LitElement {
 			count++;
 			// get the field name
 			const fieldName = item.getAttribute('name');
-			const field = document.createElement('div');
-			field.textContent = fieldName;
+			const field = document.createElement('fx-field');
+			field.xml = item;
 			fragment.append(field);
 			item = catalog.iterateNext();
 		}

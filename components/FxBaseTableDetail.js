@@ -42,6 +42,7 @@ export default class FxBaseTableDetail extends LitElement {
 				margin: 10px;
 				border: 1px solid black;
 				position: relative;
+				var(--title-size: 1.5em);
 			}
 			#container {
 				display: flex;
@@ -65,6 +66,13 @@ export default class FxBaseTableDetail extends LitElement {
 			#fields{
 				width: 100%;
 			}
+
+			::slotted(fx-field) {
+				--title-size: 1em;
+			}
+			h2{
+				font-size: var(--title-size);
+			}
 		`;
 
 	}
@@ -74,7 +82,6 @@ export default class FxBaseTableDetail extends LitElement {
 		<h2>${this.name}</h2>
 		<div id='container' uuid=${this.uuid}>
 			<div id='id'><a href='/tables?id=${this.id}' @click=${route}>ID: ${this.id}</a></div>
-			<div>Position: ${this.position}</div>
 			<div>Modifications: ${this.modifications}</div>
 			<div>Username: ${this.username}</div>
 			<div>Account Name: ${this.accountname}</div>
