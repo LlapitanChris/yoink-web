@@ -3,7 +3,7 @@ import { LitElement, html } from 'https://cdn.skypack.dev/lit-element';
 
 import '../pages/HomePage.js';
 import '../pages/AboutPage.js';
-import '../pages/TablePage.js';
+import '../pages/BaseTablePage.js';
 
 
 export default class FxApp extends LitElement {
@@ -22,8 +22,21 @@ export default class FxApp extends LitElement {
 	static get properties() {
 		return {
 			path: { type: String },
+			xml: { type: Object },
+			pathToXml: { type: String, reflect: true, attribute: 'path-to-xml'},
 		}
 
+	}
+
+	set pathToXml(value) {
+		this._pathToXml = value;
+		// fetch the xml
+		this.fetchXml();
+	}
+
+	get pathToXml() { 
+		return this._pathToXml;
+	
 	}
 
 
@@ -71,13 +84,25 @@ export default class FxApp extends LitElement {
 		this.updatePage();
 		window.addEventListener('popstate', this.updatePage.bind(this));
 		window.route = this.route;
-		console.log('window route:', window.route, window.onpopstate);
+
 	}
 
 	disconnectedCallback() { 
 		super.disconnectedCallback();
 		window.removeEventListener('popstate', this.updatePage.bind(this));
 		window.route = null;
+	}
+
+	async fetchXml() {
+		try {
+			let xml = await fetch(this._pathToXml).then(response => response.text())
+			const parser = new DOMParser()
+			const xmlDoc = parser.parseFromString(xml, 'text/xml')
+			this.xml = xmlDoc;
+			console.debug('xmlDoc:', xmlDoc)
+		} catch (error) {
+			console.error('Error occurred in fetchXml:', error)
+		}
 	}
 
 }
