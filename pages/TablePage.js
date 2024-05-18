@@ -4,11 +4,11 @@ import { LitElement, html } from 'https://cdn.skypack.dev/lit-element';
 import { Task } from 'https://cdn.skypack.dev/@lit-labs/task';
 
 // import XML to HTML utility
-import { XmlToHtml } from '../../utilities/XsltHelper.js'
+import { XmlToHtml } from '../utilities/XsltHelper.js'
 
 // import sub components
-import '../FxBaseTable.js';
-import '../FxBaseTableDetail.js';
+import '../components/FxBaseTable.js';
+import '../components/FxBaseTableDetail.js';
 
 export default class TablePage extends LitElement {
 
@@ -18,12 +18,12 @@ export default class TablePage extends LitElement {
 		this.id;
 	}
 
-	static get properties() { 
+	static get properties() {
 		return {
 			id: { type: String },
 			fragment: { type: Object }
 		}
-	
+
 	}
 
 

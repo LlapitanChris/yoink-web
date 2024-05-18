@@ -1,9 +1,9 @@
 // root level app component with a router
 import { LitElement, html } from 'https://cdn.skypack.dev/lit-element';
 
-import './pages/HomePage.js';
-import './pages/AboutPage.js';
-import './pages/TablePage.js';
+import '../pages/HomePage.js';
+import '../pages/AboutPage.js';
+import '../pages/TablePage.js';
 
 
 export default class FxApp extends LitElement {
