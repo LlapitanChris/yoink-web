@@ -38,23 +38,26 @@ export default class TablePage extends LitElement {
 		const parent = this.closest('fx-app');
 		const xml = parent.xml;
 
+
 		let headerHTML, baseTables;
 
 		if (this.id) {
 			headerHTML = html`<h1>Base Table ${this.id}</h1>`;
-			baseTables = [xml.querySelector(`BaseTable[id="${this.id}"`)];
+			baseTables = xml.evaluate(`//BaseTable[@id="${this.id}"]`, xml, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
 
 		} else {
 			headerHTML = html`<h1>Base Table List</h1>`;
-			baseTables = Array.from(xml.querySelectorAll(`BaseTable`));
+			baseTables = xml.evaluate('//BaseTable', xml, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
 		}
 
 		// create the base tables
-		baseTables.forEach((baseTable) => {
-			const fxBaseTable = document.createElement('fx-base-table');
-			fxBaseTable.xml = baseTable;
-			this.append(fxBaseTable);
-		});
+		let baseTable = baseTables.iterateNext();
+		while (baseTable) {
+			const baseTableElement = document.createElement('fx-base-table');
+			baseTableElement.xml = baseTable;
+			this.appendChild(baseTableElement);
+			baseTable = baseTables.iterateNext();
+		}
 
 		return [
 			headerHTML,
