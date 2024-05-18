@@ -6,15 +6,32 @@ import { LitElement, html, css } from "https://cdn.skypack.dev/lit-element";
 export default class FxBaseTableDetail extends LitElement {
 	static get properties() {
 		return {
+			xml: { type: Object },
 			uuid: { type: String, reflect: true },
 			id: { type: String, reflect: true },
-			name: { type: String, reflect: true },
-			taglist: { type: String, reflect: true },
-			position: { type: Number, reflect: true },
-			modifications: { type: String, reflect: true },
-			username: { type: String, reflect: true },
-			accountname: { type: String, reflect: true }
+			name: { type: String,  },
+			taglist: { type: String,  },
+			fieldCount: { type: Number,  },
+			modifications: { type: String,  },
+			username: { type: String,  },
+			accountname: { type: String,  },
+			fieldCatalog: { type: Object }
 		};
+	}
+	set xml(value) {
+		this._xml = value;
+		this.id = value.getAttribute('id');
+		this.name = value.getAttribute('name');
+		this.taglist = value.querySelector('TagList').textContent;
+		this.modifications = value.querySelector('UUID').getAttribute('modifications');
+		this.username = value.querySelector('UUID').getAttribute('userName');
+		this.accountname = value.querySelector('UUID').getAttribute('accountName');
+		this.uuid = value.querySelector('UUID').textContent;
+
+	}
+
+	get xml() {
+		return this._xml;
 	}
 
 	static get styles() {

@@ -53,9 +53,19 @@ export default class TablePage extends LitElement {
 		// create the base tables
 		let baseTable = baseTables.iterateNext();
 		while (baseTable) {
-			const baseTableElement = document.createElement('fx-base-table');
+			const baseTableElement = document.createElement(this.id ? 'fx-base-table-detail' : 'fx-base-table');
 			baseTableElement.xml = baseTable;
 			this.appendChild(baseTableElement);
+
+			// get the fields
+			const [fragment, count, fieldCatalog] = this.getFields(xml, baseTable);
+			baseTableElement.fieldCount = count;
+			baseTableElement.fieldCatalog = fieldCatalog;
+
+			if (this.id) {
+				baseTableElement.append(fragment)
+			}
+
 			baseTable = baseTables.iterateNext();
 		}
 
@@ -63,6 +73,32 @@ export default class TablePage extends LitElement {
 			headerHTML,
 			html`<slot></slot>`
 		]
+	}
+
+	getFields(xml, baseTable) {
+		// get the uuid
+		const uuid = baseTable.querySelector('UUID').textContent;
+		// build xpath query
+		const xpath = `//FieldCatalog/BaseTableReference[@UUID='${uuid}']/following-sibling::ObjectList/Field`;
+		// get the fields
+		const catalog = xml.evaluate(xpath, xml, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
+		const catalogUntouched = xml.evaluate(xpath, xml, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
+		let count = 0;
+		// duplicate result object
+		let item = catalog.iterateNext();
+		const fragment = document.createDocumentFragment();
+		while (item) {
+			count++;
+			// get the field name
+			const fieldName = item.getAttribute('name');
+			const field = document.createElement('div');
+			field.textContent = fieldName;
+			fragment.append(field);
+			item = catalog.iterateNext();
+		}
+
+		return [fragment, count, catalogUntouched];
+
 	}
 
 

@@ -15,12 +15,13 @@ export default class FxBaseTable extends LitElement {
 			xml: { type: Object },
 			uuid: { type: String, reflect: true },
 			id: { type: String, reflect: true },
-			name: { type: String, reflect: true },
-			taglist: { type: String, reflect: true },
-
-			modifications: { type: String, reflect: true },
-			username: { type: String, reflect: true },
-			accountname: { type: String, reflect: true }
+			name: { type: String, },
+			taglist: { type: String, },
+			fieldCount: { type: Number, },
+			modifications: { type: String, },
+			username: { type: String, },
+			accountname: { type: String, },
+			fieldCatalog: { type: Object }
 		};
 	}
 
@@ -29,7 +30,6 @@ export default class FxBaseTable extends LitElement {
 		this.id = value.getAttribute('id');
 		this.name = value.getAttribute('name');
 		this.taglist = value.querySelector('TagList').textContent;
-
 		this.modifications = value.querySelector('UUID').getAttribute('modifications');
 		this.username = value.querySelector('UUID').getAttribute('userName');
 		this.accountname = value.querySelector('UUID').getAttribute('accountName');
@@ -54,6 +54,7 @@ export default class FxBaseTable extends LitElement {
 				display: flex;
 				flex-direction: row;
 				flex-wrap: wrap;
+				gap: 5px;
 
 			}
 
@@ -80,7 +81,8 @@ export default class FxBaseTable extends LitElement {
 			<div>Modifications: ${this.modifications}</div>
 			<div>Username: ${this.username}</div>
 			<div>Account Name: ${this.accountname}</div>
-			<div>Tag List: ${this.taglist}</div>
+			<div>Tags: ${this.taglist}</div>
+			<div>Fields: ${this.fieldCount}</div>
 		</div>
 		`;
 
