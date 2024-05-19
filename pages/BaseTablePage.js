@@ -83,61 +83,23 @@ export default class TablePage extends LitElement {
 			baseTables = xml.evaluate('//BaseTable', xml, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
 		}
 
-		// create the base tables
+		// create the base tables from the xml
 		let baseTable = baseTables.iterateNext();
 		while (baseTable) {
-			const baseTableElement = document.createElement(this.id ? 'fx-base-table-detail' : 'fx-base-table');
-			baseTableElement.xml = baseTable;
+			const baseTableElement = document.createElement('fx-base-table');
+			baseTableElement.xmlNode = baseTable;
+			baseTableElement.xmlDocument = xml;
 			baseTableElement.classList.add('bordered');
 			this.appendChild(baseTableElement);
-
-			// get the fields
-			const uuid = baseTable.querySelector('UUID').textContent;
-			baseTableElement.fieldCount = xml.evaluate(
-				`//FieldCatalog/BaseTableReference[@UUID='${uuid}']/following-sibling::ObjectList/@membercount`,
-				xml, null, XPathResult.NUMBER_TYPE, null).numberValue;
-			baseTableElement.occurrenceCount = xml.evaluate(
-				`//TableOccurrenceCatalog//BaseTableSourceReference/BaseTableReference[@UUID='${uuid}']/ancestor::TableOccurrence`,
-				xml, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotLength;
-
-			if (this.id) {
-				const [fragment] = this.getFields(xml, baseTable);
-				baseTableElement.append(fragment)
-			}
 
 			baseTable = baseTables.iterateNext();
 		}
 
 		return [
 			headerHTML,
+			// render the slot
 			html`<div id='container'><slot></slot></div>`
 		]
-	}
-
-	getFields(xml, baseTable) {
-		// get the uuid
-		const uuid = baseTable.querySelector('UUID').textContent;
-		// build xpath query
-		const xpath = `//FieldCatalog/BaseTableReference[@UUID='${uuid}']/following-sibling::ObjectList/Field`;
-		// get the fields
-		const catalog = xml.evaluate(xpath, xml, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
-		const catalogUntouched = xml.evaluate(xpath, xml, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
-		let count = 0;
-		// duplicate result object
-		let item = catalog.iterateNext();
-		const fragment = document.createDocumentFragment();
-		while (item) {
-			count++;
-			// get the field name
-			const fieldName = item.getAttribute('name');
-			const field = document.createElement('fx-field');
-			field.xml = item;
-			fragment.append(field);
-			item = catalog.iterateNext();
-		}
-
-		return [fragment, count, catalogUntouched];
-
 	}
 
 

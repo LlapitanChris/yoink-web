@@ -94,18 +94,11 @@ export default class FxDatabaseElement extends LitElement {
 	
 	}
 
-	get allXml() {
-		// get from the parent app
-		const parent = this.closest('fx-app');
-		return parent.xml;
-	}
-
 	render() {
 		if (this.lightDomTemplate) {
 			// evaluate the template
-			const lightDomContent = this.lightDomTemplate();
 			// render the template in the light dom
-			render(lightDomContent, this);
+			render(this.lightDomTemplate(), this);
 		}
 
 		return html`

@@ -1,5 +1,5 @@
 // import LitElement from CDN
-import { LitElement, html, css, render } from "https://cdn.skypack.dev/lit-element";
+import { html, css, nothing } from "https://cdn.skypack.dev/lit-element";
 import './FxNameValuePair.js';
 import './FxModificationTag.js';
 import './FxDatabaseElement.js';
@@ -17,11 +17,12 @@ export default class FxBaseTable extends FxDatabaseElement {
 
 	constructor() {
 		super();
-		this._xml;
+		this._xmlNode;
+		this.xmlDocument;
 		this.name = '';
 		this.taglist = '';
-		this.fieldCount = 0;
 		this.fieldCatalog = {};
+		this.showingFields = false;
 	}
 
 	static get properties() {
@@ -30,13 +31,16 @@ export default class FxBaseTable extends FxDatabaseElement {
 			taglist: { type: String, },
 			fieldCount: { type: Number, },
 			occurrenceCount: { type: Number },
-			fieldCatalog: { type: Object },
+			fieldsXml: { type: Object },
+			detailType: { type: String, reflect: true },
 		};
 	}
 
-	set xml(value) { 
+	set xmlNode(value) { 
+		// pass xml to base class to render UUID/id info
 		super.xml = value;
-		this._xml = value;
+		// set the xml node
+		this._xmlNode = value;
 		try {
 			this.name = value.getAttribute('name');
 			this.taglist = value.querySelector('TagList').textContent;
@@ -48,15 +52,49 @@ export default class FxBaseTable extends FxDatabaseElement {
 	
 	}
 
-	get xml() { 
-		return this._xml;
+	get xmlNode() { 
+		return this._xmlNode;
+	}
+
+	get fieldCount() { 
+		if (!this.xmlDocument) return 0;
+		return this.xpath(
+			`//FieldCatalog/BaseTableReference[@UUID='${this.uuid}']/following-sibling::ObjectList/@membercount`,
+			XPathResult.NUMBER_TYPE).numberValue;
+	}
+
+	get fieldsXml() {
+		// if no xml document return nothing
+		if (!this.xmlDocument) return nothing;
+		// build xpath query
+		const xpath = `//FieldCatalog/BaseTableReference[@UUID='${this.uuid}']/following-sibling::ObjectList/Field`;
+		// get the fields
+		const catalog = this.xpath(xpath, XPathResult.ORDERED_NODE_ITERATOR_TYPE);
+		// return xpath result
+		return catalog;
+	}
+
+	get occurrenceXml() {
+		if (!this.xmlDocument) return nothing;
+
+		return this.xpath(
+			`//TableOccurrenceCatalog//BaseTableSourceReference/BaseTableReference[@UUID='${this.uuid}']/ancestor::TableOccurrence`,
+			XPathResult.ORDERED_NODE_ITERATOR_TYPE);
+	
+	}
+
+	get occurrenceCount() { 
+		if (!this.xmlDocument) return 0;
+
+		return this.xpath(
+			`//TableOccurrenceCatalog//BaseTableSourceReference/BaseTableReference[@UUID='${this.uuid}']/ancestor::TableOccurrence`,
+			 XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE).snapshotLength;
 	}
 
 	static get styles() {
 		return [
 			super.styles,
 			css`
-
 
 		`];
 
@@ -66,11 +104,59 @@ export default class FxBaseTable extends FxDatabaseElement {
 		return html`
 			<h2 slot='title'><a href='/tables?id=${this.id}' @click=${route}>${this.name}</a></h2>
 			<fx-name-value-pair .name=${`tags`}>${this.taglist||'none'}</fx-name-value-pair>
-			<fx-name-value-pair .name=${`fields`}>${this.fieldCount}</fx-name-value-pair>
-			<fx-name-value-pair .name=${`occurrences`}>${this.occurrenceCount}</fx-name-value-pair>
+			<fx-name-value-pair .name=${`fields`} @click=${this.toggleDetailType.bind(this, 'fields')} class='link'>${this.fieldCount}</fx-name-value-pair>
+			<fx-name-value-pair .name=${`occurrences`} @click=${this.toggleDetailType.bind(this, 'occurrences')}>${this.occurrenceCount}</fx-name-value-pair>
+			${this.detailTemplate()}
 		`;
 	}
 
+	fieldsTemplate() {
+		const catalog = this.fieldsXml;
+		let item = catalog.iterateNext();
+		let templates = []
+		while (item) {
+			const template = html`<fx-field .xml=${item}></fx-field>`;
+			templates.push(template);
+			item = catalog.iterateNext();
+		}
+
+		return templates;
+	}
+
+	occurrencesTemplate() {
+		const catalog = this.occurrenceXml;
+		let item = catalog.iterateNext();
+		let templates = [];
+		while (item) {
+			const name = item.getAttribute('name');
+			const template = html`<div>${name}</div>`;
+			templates.push(template);
+			item = catalog.iterateNext();
+		}
+
+		return templates;
+	}
+
+	toggleDetailType(type) {
+		this.detailType = this.detailType === type ? '' : type;
+	}
+		
+		
+	detailTemplate() {
+		switch (this.detailType) {
+			case 'fields':
+				return html`<div id='fields'>${this.fieldsTemplate()}</div>`;
+			case 'occurrences':
+				return html`<div id='occurrences'>${this.occurrencesTemplate()}</div>`;
+			default:
+				return nothing;
+		}
+	}
+
+	xpath(path, resultType) {
+		return this.xmlDocument.evaluate(path, this.xmlDocument, null, resultType, null);
+	
+	}
 
 }
 

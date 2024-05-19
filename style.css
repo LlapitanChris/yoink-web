@@ -49,13 +49,24 @@ body {
 	font-family: 'Open Sans', sans-serif;
 	background-color: #f0f0f0;
 	font-size: 1rem;
+
+	--link-hover-color: #007bff9f;
 }
 
 a {
+	cursor: pointer;
 	text-decoration: none;
-	color: #333;
+	color: inherit;
 }
 
 a:hover {
-	text-decoration: underline;
+	color: var(--link-hover-color);
+}
+
+.link {
+	cursor: pointer;
+}
+
+.link:hover {
+	color: var(--link-hover-color);
 }
