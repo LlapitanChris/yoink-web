@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'https://cdn.skypack.dev/lit-element';
+import { LitElement, html, css, render } from 'https://cdn.skypack.dev/lit-element';
 
 import './FxModificationTag.js';
 
@@ -32,8 +32,14 @@ export default class FxDatabaseElement extends LitElement {
 				--flex-direction: row;
 				--flex-wrap: wrap;
 				--gap: 10px;
-
+				padding: 10px;
 			}
+
+			:host(.bordered) {
+				border: 1px solid black;
+				border-radius: 5px;
+			}
+
 
 			#title {
 				border-bottom: 1px solid black;
@@ -49,8 +55,14 @@ export default class FxDatabaseElement extends LitElement {
 
 			#id {
 				position: absolute;
-				top: 0;
-				right: 0;
+				top: 5px;
+				right: 10px;
+			}
+
+			::slotted(fx-name-value-pair) {
+				border: 1px solid black;
+				border-radius: 5px;
+				--separator: 1px solid black;
 			}
 
 		
@@ -82,7 +94,20 @@ export default class FxDatabaseElement extends LitElement {
 	
 	}
 
+	get allXml() {
+		// get from the parent app
+		const parent = this.closest('fx-app');
+		return parent.xml;
+	}
+
 	render() {
+		if (this.lightDomTemplate) {
+			// evaluate the template
+			const lightDomContent = this.lightDomTemplate();
+			// render the template in the light dom
+			render(lightDomContent, this);
+		}
+
 		return html`
 			<div id='title'><slot name='title'></slot></div>
 			<div id="container">

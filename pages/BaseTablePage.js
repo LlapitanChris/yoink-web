@@ -88,6 +88,7 @@ export default class TablePage extends LitElement {
 		while (baseTable) {
 			const baseTableElement = document.createElement(this.id ? 'fx-base-table-detail' : 'fx-base-table');
 			baseTableElement.xml = baseTable;
+			baseTableElement.classList.add('bordered');
 			this.appendChild(baseTableElement);
 
 			// get the fields

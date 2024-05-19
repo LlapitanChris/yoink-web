@@ -14,6 +14,7 @@ export default class FxModificationTag extends LitElement {
 	}
 
 	set xml(value) { 
+		if (!value) return;
 		try {
 			this._xml = value;
 			this.modCount = value.getAttribute('modifications');
