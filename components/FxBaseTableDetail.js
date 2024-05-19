@@ -1,6 +1,8 @@
 // import LitElement from CDN
 import { LitElement, html, css } from "https://cdn.skypack.dev/lit-element";
 
+import './FxNameValuePair.js';
+import './FxModificationTag.js'
 
 
 export default class FxBaseTableDetail extends LitElement {
@@ -12,9 +14,7 @@ export default class FxBaseTableDetail extends LitElement {
 			name: { type: String,  },
 			taglist: { type: String,  },
 			fieldCount: { type: Number,  },
-			modifications: { type: String,  },
-			username: { type: String,  },
-			accountname: { type: String,  },
+			uuidXml: { type: Object },
 			fieldCatalog: { type: Object }
 		};
 	}
@@ -23,10 +23,8 @@ export default class FxBaseTableDetail extends LitElement {
 		this.id = value.getAttribute('id');
 		this.name = value.getAttribute('name');
 		this.taglist = value.querySelector('TagList').textContent;
-		this.modifications = value.querySelector('UUID').getAttribute('modifications');
-		this.username = value.querySelector('UUID').getAttribute('userName');
-		this.accountname = value.querySelector('UUID').getAttribute('accountName');
 		this.uuid = value.querySelector('UUID').textContent;
+		this.uuidXml = value.querySelector('UUID');
 
 	}
 
@@ -82,14 +80,12 @@ export default class FxBaseTableDetail extends LitElement {
 		<h2>${this.name}</h2>
 		<div id='container' uuid=${this.uuid}>
 			<div id='id'><a href='/tables?id=${this.id}' @click=${route}>ID: ${this.id}</a></div>
-			<div>Modifications: ${this.modifications}</div>
-			<div>Username: ${this.username}</div>
-			<div>Account Name: ${this.accountname}</div>
 			<div>Tag List: ${this.taglist}</div>
 			<div id='fields'>
 				<h2>Fields</h2>
 				<slot></slot>
 			</div>
+			<fx-modification-tag .xml=${this.uuidXml}></fx-modification-tag>
 		</div>
 		`;
 

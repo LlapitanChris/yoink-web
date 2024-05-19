@@ -30,19 +30,30 @@ export default class TablePage extends LitElement {
 
 	static get styles() { 
 		return css`
+
 			:host {
 				display: block;
 				padding: 10px;
 				margin: 10px;
-				border: 1px solid black;
-				position: relative;
-				var(--title-size: 1.5rem);
+				--title-size: 1.5rem;
+				--display: flex;
+				--flex-direction: column;
+				--flex-wrap: wrap;
+				--gap: 10px;
 			}
-			fx-base-table {
-				var(--title-size: 1rem);
+
+			::slotted(*) {
+				--title-size: 1.5rem;
 			}
-			fx-base-table-detail {
-				var(--title-size: 1rem);
+
+			::slotted(fx-base-table) {
+			}
+
+			#container {
+				display: var(--display);
+				flex-direction: var(--flex-direction);
+				flex-wrap: var(--flex-wrap);
+				gap: var(--gap);
 			}
 		
 		`;
@@ -80,8 +91,12 @@ export default class TablePage extends LitElement {
 
 			// get the fields
 			const uuid = baseTable.querySelector('UUID').textContent;
-			const xpath = `//FieldCatalog/BaseTableReference[@UUID='${uuid}']/following-sibling::ObjectList/@membercount`;
-			baseTableElement.fieldCount = xml.evaluate(xpath, xml, null, XPathResult.NUMBER_TYPE, null).numberValue;
+			baseTableElement.fieldCount = xml.evaluate(
+				`//FieldCatalog/BaseTableReference[@UUID='${uuid}']/following-sibling::ObjectList/@membercount`,
+				xml, null, XPathResult.NUMBER_TYPE, null).numberValue;
+			baseTableElement.occurrenceCount = xml.evaluate(
+				`//TableOccurrenceCatalog//BaseTableSourceReference/BaseTableReference[@UUID='${uuid}']/ancestor::TableOccurrence`,
+				xml, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotLength;
 
 			if (this.id) {
 				const [fragment] = this.getFields(xml, baseTable);
@@ -93,7 +108,7 @@ export default class TablePage extends LitElement {
 
 		return [
 			headerHTML,
-			html`<slot></slot>`
+			html`<div id='container'><slot></slot></div>`
 		]
 	}
 
