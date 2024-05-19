@@ -14,12 +14,17 @@ export default class FxModificationTag extends LitElement {
 	}
 
 	set xml(value) { 
-		this._xml = value;
-		this.modCount = value.getAttribute('modifications');
-		this.username = value.getAttribute('userName');
-		this.accountname = value.getAttribute('accountName');
-		this.timestamp = value.getAttribute('timestamp');
-		this.timestampConverted = new Date(this.timestamp).toLocaleString();
+		try {
+			this._xml = value;
+			this.modCount = value.getAttribute('modifications');
+			this.username = value.getAttribute('userName');
+			this.accountname = value.getAttribute('accountName');
+			this.timestamp = value.getAttribute('timestamp');
+			this.timestampConverted = new Date(this.timestamp).toLocaleString();
+		} catch (error) {
+			console.error('error setting xml', error);
+			console.debug('xml', value)
+		}
 	}
 
 	static get styles() {

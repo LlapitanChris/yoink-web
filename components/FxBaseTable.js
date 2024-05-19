@@ -2,6 +2,7 @@
 import { LitElement, html, css } from "https://cdn.skypack.dev/lit-element";
 import './FxNameValuePair.js';
 import './FxModificationTag.js';
+import './FxDatabaseElement.js';
 
 /* this is the template for the base table xml
  * 	<BaseTable id="130" name="Base Table">
@@ -40,11 +41,16 @@ export default class FxBaseTable extends LitElement {
 
 	set xml(value) { 
 		this._xml = value;
-		this.id = value.getAttribute('id');
-		this.name = value.getAttribute('name');
-		this.taglist = value.querySelector('TagList').textContent;
-		this.uuid = value.querySelector('UUID').textContent;
-		this.uuidXml = value.querySelector('UUID');
+		try {
+			this.id = value.getAttribute('id');
+			this.name = value.getAttribute('name');
+			this.taglist = value.querySelector('TagList').textContent;
+			this.uuid = value.querySelector('UUID').textContent;
+			this.uuidXml = value.querySelector('UUID');
+		} catch (error) {
+			console.error('error setting xml', error);
+			console.debug('xml', value)
+		}
 		
 	
 	}
@@ -109,18 +115,29 @@ export default class FxBaseTable extends LitElement {
 
 	}
 
+	// render() {
+	// 	return html`
+	// 	<h2><a href='/tables?id=${this.id}' @click=${route}>${this.name}</a></h2>
+	// 	<div id='container' uuid=${this.uuid}>
+	// 	<div id='id'>${this.id}</div>
+	// 	<fx-name-value-pair .name=${`tags`}>${this.taglist||'none'}</fx-name-value-pair>
+	// 	<fx-name-value-pair .name=${`fields`}>${this.fieldCount}</fx-name-value-pair>
+	// 	<fx-name-value-pair .name=${`occurrences`}>${this.occurrenceCount}</fx-name-value-pair>
+	// 		<fx-modification-tag .xml=${this.uuidXml}></fx-modification-tag>
+	// 	</div>
+	// 	`;
+
+	// }
+
 	render() {
 		return html`
-		<h2><a href='/tables?id=${this.id}' @click=${route}>${this.name}</a></h2>
-		<div id='container' uuid=${this.uuid}>
-		<div id='id'>${this.id}</div>
-		<fx-name-value-pair .name=${`tags`}>${this.taglist||'none'}</fx-name-value-pair>
-		<fx-name-value-pair .name=${`fields`}>${this.fieldCount}</fx-name-value-pair>
-		<fx-name-value-pair .name=${`occurrences`}>${this.occurrenceCount}</fx-name-value-pair>
-		<fx-modification-tag .xml=${this.uuidXml}></fx-modification-tag>
-		</div>
+			<fx-database-element .xml=${this.xml}>
+				<a slot='title' href='/tables?id=${this.id}' @click=${route}>${this.name}</a>
+				<fx-name-value-pair .name=${`tags`}>${this.taglist||'none'}</fx-name-value-pair>
+				<fx-name-value-pair .name=${`fields`}>${this.fieldCount}</fx-name-value-pair>
+				<fx-name-value-pair .name=${`occurrences`}>${this.occurrenceCount}</fx-name-value-pair>
+			</fx-database-element>
 		`;
-
 	}
 }
 

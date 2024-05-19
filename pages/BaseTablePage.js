@@ -47,6 +47,7 @@ export default class TablePage extends LitElement {
 			}
 
 			::slotted(fx-base-table) {
+				max-width: 700px;
 			}
 
 			#container {
