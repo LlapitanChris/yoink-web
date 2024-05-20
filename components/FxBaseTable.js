@@ -104,8 +104,20 @@ export default class FxBaseTable extends FxDatabaseElement {
 		return html`
 			<h2 slot='title'><a href='/tables?id=${this.id}' @click=${route}>${this.name}</a></h2>
 			<fx-name-value-pair .name=${`tags`}>${this.taglist||'none'}</fx-name-value-pair>
-			<fx-name-value-pair .name=${`fields`} @click=${this.toggleDetailType.bind(this, 'fields')} class='link'>${this.fieldCount}</fx-name-value-pair>
-			<fx-name-value-pair .name=${`occurrences`} @click=${this.toggleDetailType.bind(this, 'occurrences')}>${this.occurrenceCount}</fx-name-value-pair>
+			<fx-name-value-pair .name=${`fields`} 
+				@click=${this.toggleDetailType.bind(this, 'fields')} 
+				class='link'
+			>
+				${this.fieldCount}
+			</fx-name-value-pair>
+				
+			<fx-name-value-pair .name=${`occurrences`} 
+				@click=${this.toggleDetailType.bind(this, 'occurrences')} 
+				class='link'
+			>
+				${this.occurrenceCount}
+			</fx-name-value-pair>
+
 			${this.detailTemplate()}
 		`;
 	}
@@ -115,7 +127,7 @@ export default class FxBaseTable extends FxDatabaseElement {
 		let item = catalog.iterateNext();
 		let templates = []
 		while (item) {
-			const template = html`<fx-field .xml=${item}></fx-field>`;
+			const template = html`<fx-field .xmlNode=${item} .xmlDocument=${this.xmlDocument} class='bordered'></fx-field>`;
 			templates.push(template);
 			item = catalog.iterateNext();
 		}
@@ -145,9 +157,9 @@ export default class FxBaseTable extends FxDatabaseElement {
 	detailTemplate() {
 		switch (this.detailType) {
 			case 'fields':
-				return html`<div id='fields'>${this.fieldsTemplate()}</div>`;
+				return html`<h2 class='detail-title'>Fields</h2><div class='element-detail'>${this.fieldsTemplate()}</div>`;
 			case 'occurrences':
-				return html`<div id='occurrences'>${this.occurrencesTemplate()}</div>`;
+				return html`<h2 class='detail-title'>Occurrences</h2><div class='element-detail'>${this.occurrencesTemplate()}</div>`;
 			default:
 				return nothing;
 		}

@@ -33,13 +33,12 @@ export default class TablePage extends LitElement {
 
 			:host {
 				display: block;
-				padding: 10px;
 				margin: 10px;
 				--title-size: 1.5rem;
 				--display: flex;
 				--flex-direction: column;
 				--flex-wrap: wrap;
-				--gap: 10px;
+				--gap: 15px;
 			}
 
 			::slotted(*) {

@@ -13,7 +13,7 @@ export default class FxDatabaseElement extends LitElement {
 
 	static get properties() {
 		return {
-			id: { type: String, reflect: true },
+			id: { type: String },
 			uuid: { type: String, reflect: true},
 			uuidXml: { type: Object, state: true },
 			xml: { type: Object },
@@ -27,12 +27,18 @@ export default class FxDatabaseElement extends LitElement {
 			:host {
 				display: flex;
 				flex-direction: column;
+				justify-content: space-between;
 				gap: 10px;
 				position: relative;
 				--flex-direction: row;
 				--flex-wrap: wrap;
 				--gap: 10px;
-				padding: 10px;
+				--padding-top: 30px;
+				height: 100%;
+				padding-top: var(--padding-top);
+				padding-bottom: var(--padding-top);
+				padding-left: 10px;
+				padding-right: 10px;
 			}
 
 			:host(.bordered) {
@@ -43,6 +49,8 @@ export default class FxDatabaseElement extends LitElement {
 
 			#title {
 				border-bottom: 1px solid black;
+				padding-bottom: 5px;
+				margin-bottom: 5px;
 			}
 
 			#container {
@@ -55,7 +63,7 @@ export default class FxDatabaseElement extends LitElement {
 
 			#id {
 				position: absolute;
-				top: 5px;
+				top: var(--padding-top);
 				right: 10px;
 			}
 
@@ -77,6 +85,10 @@ export default class FxDatabaseElement extends LitElement {
 	}
 
 	set uuidXml(value) {
+		if (!value) {
+			console.log(`element ${this.id} has no uuid node`, this._xml);
+			return;
+		}
 		this._uuidXml = value;
 		this.uuid = value.textContent;
 		// create the modification tag

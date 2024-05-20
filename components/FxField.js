@@ -1,6 +1,7 @@
-import { LitElement, html, css } from 'https://cdn.skypack.dev/lit-element';
+import { LitElement, html, css, nothing } from 'https://cdn.skypack.dev/lit-element';
 import './FxNameValuePair.js'
 import './FxModificationTag.js'
+import FxDatabaseElement from './FxDatabaseElement.js';
 
 /* <Field id="15" name="UUID userName" fieldtype="Normal" datatype="Text" comment="">
 	<UUID modifications="2" userName="Kaz McLamore" accountName="Admin" timestamp="2022-06-04T13:56:49">A185470B-51F3-4036-9A4F-A4607B1B18DD</UUID>
@@ -13,84 +14,64 @@ import './FxModificationTag.js'
 </Field> */
 
 
-export default class FxField extends LitElement {
+export default class FxField extends FxDatabaseElement {
 
 	constructor() {
 		super();
-		this.showDetail = false;
-		this._xml = null;
-		this.id = '';
+		this._xmlNode;
+		this._xmlDocument
 		this.name = '';
-		this.uuid = '';
-		this.lastModified = { modifications: '', username: '', accountname: '', timestamp: ''};
 		this.autoenter = { prohibitModification: '', type: '' };
 
 	}
 
 	static get properties() {
 		return {
-			showDetail: { type: Boolean, reflect: true, attibute: 'show-detail' },
-			xml: { type: Object },
-			uuidXml: { type: Object, state: true },
-			id: { type: String, reflect: true },
-			uuid: { type: String, reflect: true },
 			name: { type: String, state: true },
 			autoenter: { type: Object, state: true },
+			xmlNode: { type: Object },
 
 		}
 	}
 
 	static get styles() {
 
-		return css`
-			:host {
-				display: block;
-				padding: 10px;
-				margin: 10px;
-				border: 1px solid black;
-				position: relative;
-				--title-size: 1.5em;
-			}
-			#container {
-				display: flex;
-				flex-direction: row;
-				flex-wrap: wrap;
-			}
-			#container div {
-				margin-right: 10px;
-				border: 1px solid black;
-			}
-			h2{
-				font-size: var(--title-size);
-			}
-			`;
-
+		return [
+			super.styles,
+			css`
+			`
+		];
 	}
 
-	set xml(value) {
-		this._xml = value;
-		this.id = value.getAttribute('id');
+	set xmlNode(value) {
+		super.xml = value;
+		this._xmlNode = value;
 		this.name = value.getAttribute('name');
-		this.uuid = value.querySelector('UUID')?.textContent;
-		this.uuidXml = value.querySelector('UUID');
+		this.fieldType = value.getAttribute('fieldtype');
+		this.dataType = value.getAttribute('datatype');
 		this.autoenter.prohibitModification = value.querySelector('AutoEnter')?.getAttribute('prohibitModification');
 		this.autoenter.type = value.querySelector('AutoEnter')?.getAttribute('type');
+		this.isAutoEnter = this.autoenter.type ? true : false;
 
 	}
 
-	get xml() {
-		return this._xml;
-
+	get xmlNode() {
+		return this._xmlNode;
 	}
 
-	render() {
+	lightDomTemplate() {
 		return html`
-		<h2>${this.name}</h2>
-		<div id='container'>
-			<div id='id'>ID: ${this.id}</div>
-			<div id='autoenter'>AutoEnter: ${this.autoenter.type} Prohibit Modification: ${this.autoenter.prohibitModification}</div>
-			<fx-modification-tag .xml=${this.uuidXml}></fx-modification-tag>
-		</div>
+		<h2 slot='title'>${this.name}</h2>
+			<fx-name-value-pair .name=${`Field Type`}>${this.fieldType}</fx-name-value-pair>
+			<fx-name-value-pair .name=${`Data Type`}>${this.dataType}</fx-name-value-pair>
+			${
+			this.isAutoEnter ? html`
+				<fx-name-value-pair .name=${`AutoEnter`}>
+					<fx-name-value-pair .name=${`Type`}>${this.autoenter.type}</fx-name-value-pair>
+					<fx-name-value-pair .name=${`Prohibit Modification`}>${this.autoenter.prohibitModification}</fx-name-value-pair>
+				</fx-name-value-pair>
+				` : nothing
+			}
 		`;
 
 	}
