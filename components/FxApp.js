@@ -4,6 +4,7 @@ import { LitElement, html } from 'https://cdn.skypack.dev/lit-element';
 import '../pages/HomePage.js';
 import '../pages/AboutPage.js';
 import '../pages/BaseTablePage.js';
+import '../pages/FieldsPage.js';
 
 
 export default class FxApp extends LitElement {
@@ -15,7 +16,8 @@ export default class FxApp extends LitElement {
 			'/': 'fx-home-page',
 			'/index.html': 'fx-home-page',
 			'/about': 'fx-about-page',
-			'/tables': 'fx-table-page'
+			'/tables': 'fx-table-page',
+			'/fields': 'fx-field-page'
 		}
 	}
 

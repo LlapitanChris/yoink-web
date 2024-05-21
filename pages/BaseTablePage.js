@@ -36,9 +36,8 @@ export default class TablePage extends baseClass {
 
 
 	render() {
-		// get id from url
-		const url = new URL(window.location);
-		this.id = url.searchParams.get('id');
+		// get parameters from url
+		super.setPropsFromUrl();
 
 		let headerHTML, baseTables;
 
@@ -71,7 +70,7 @@ export default class TablePage extends baseClass {
 		// render a page element with the header and put 
 		// the base tables in an element list
 		return html`
-			<fx-page display=${this.display}>
+			<fx-page>
 				${headerHTML}
 				<fx-element-list class=${classMap(classes)}>
 					${baseTablesTemplatesArray}

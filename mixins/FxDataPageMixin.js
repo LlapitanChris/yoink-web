@@ -7,6 +7,14 @@ export const FxDataPageMixin = (baseClass) => class extends baseClass {
 		}
 	}
 
+	setPropsFromUrl() {
+		// set properties from url parameters
+		const url = new URL(window.location);
+		url.searchParams.forEach((value, key) => {
+			this[key] = value;
+		});
+	}
+
 	get xmlDocument() {
 		// get parent app element
 		const parent = this.closest('fx-app');

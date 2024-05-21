@@ -3,6 +3,11 @@ import { LitElement, html } from 'https://cdn.skypack.dev/lit-element';
 import '../components/FxPage.js';
 
 export default class AboutPage extends LitElement { 
+
+	createRenderRoot () {
+		return this;
+	}
+
 	render() {
 		return html`
 			<fx-page>
