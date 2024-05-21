@@ -40,7 +40,7 @@ export default class FxNameValuePair extends LitElement {
 				flex-direction: var(--flex-direction);
 				gap: var(--flex-gap);
 				overflow: hidden;
-				align-items: center;
+				align-items: flex-start;
 				padding-left: var(--padding-left);
 				padding-right: var(--padding-right);
 				align-items: stretch;
@@ -49,7 +49,7 @@ export default class FxNameValuePair extends LitElement {
 
 			#name {
 				display: flex;
-				align-items: center;
+				align-items: flex-start;
 				font-weight: var(--label-font-weight);
 				width: var(--label-width);
 				white-space: var(--label-white-space);
@@ -68,8 +68,6 @@ export default class FxNameValuePair extends LitElement {
 				flex-wrap: wrap;
 
 				align-items: center;
-				padding-top: var(--padding-top);
-				padding-bottom: var(--padding-bottom);
 			}
 
 			`;

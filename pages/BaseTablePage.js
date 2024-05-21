@@ -1,15 +1,14 @@
-import { LitElement, html, css } from 'https://cdn.skypack.dev/lit-element';
+import { LitElement, html } from 'https://cdn.skypack.dev/lit-element';
 
 // import the task from CDN
-import { Task } from 'https://cdn.skypack.dev/@lit-labs/task';
+import { classMap } from 'https://cdn.skypack.dev/lit-html/directives/class-map';
 
-// import XML to HTML utility
-import { XmlToHtml } from '../utilities/XsltHelper.js'
+
 
 // import sub components
 import '../components/FxBaseTable.js';
-import '../components/FxBaseTableDetail.js';
 import '../components/FxField.js';
+import '../components/FxElementList.js';
 
 export default class TablePage extends LitElement {
 
@@ -18,47 +17,21 @@ export default class TablePage extends LitElement {
 		this.fragment;
 		this.id;
 		this.xml;
+		this.display = 'list'
 	}
 
 	static get properties() {
 		return {
 			id: { type: String },
 			fragment: { type: Object },
+			display: { type: String, reflect: true },
 		}
 
 	}
 
-	static get styles() { 
-		return css`
-
-			:host {
-				display: block;
-				margin: 10px;
-				--title-size: 1.5rem;
-				--display: flex;
-				--flex-direction: column;
-				--flex-wrap: wrap;
-				--gap: 15px;
-			}
-
-			::slotted(*) {
-				--title-size: 1.5rem;
-			}
-
-			::slotted(fx-base-table) {
-				max-width: 700px;
-			}
-
-			#container {
-				display: var(--display);
-				flex-direction: var(--flex-direction);
-				flex-wrap: var(--flex-wrap);
-				gap: var(--gap);
-			}
-		
-		`;
+	createRenderRoot() {
+		return this;
 	}
-
 
 
 	render() {
@@ -70,35 +43,46 @@ export default class TablePage extends LitElement {
 		const parent = this.closest('fx-app');
 		const xml = parent.xml;
 
+		// add page class
+		this.classList.add('page');
+
 
 		let headerHTML, baseTables;
 
 		if (this.id) {
-			headerHTML = html`<h1>Base Table ${this.id}</h1>`;
+			headerHTML = html`<h1 class='page-title'>Base Table ${this.id}</h1>`;
 			baseTables = xml.evaluate(`//BaseTable[@id="${this.id}"]`, xml, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
 
 		} else {
-			headerHTML = html`<h1>Base Table List</h1>`;
+			headerHTML = html`<h1 class='page-title'>Base Table List</h1>`;
 			baseTables = xml.evaluate('//BaseTable', xml, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
 		}
 
+
 		// create the base tables from the xml
 		let baseTable = baseTables.iterateNext();
+		const baseTablesTemplatesArray = [];
 		while (baseTable) {
-			const baseTableElement = document.createElement('fx-base-table');
-			baseTableElement.xmlNode = baseTable;
-			baseTableElement.xmlDocument = xml;
-			baseTableElement.classList.add('bordered');
-			this.appendChild(baseTableElement);
-
+			const baseTableTemplate = html`
+				<fx-base-table class='bordered' .xmlNode=${baseTable} .xmlDocument=${xml}></fx-base-table>`;
+			baseTablesTemplatesArray.push(baseTableTemplate);
 			baseTable = baseTables.iterateNext();
 		}
 
-		return [
-			headerHTML,
-			// render the slot
-			html`<div id='container'><slot></slot></div>`
-		]
+		const classes = {
+			'grid': this.display === 'grid',
+			'flex': this.display === 'flex',
+			'list': this.display === 'list'
+		}
+
+		return html`
+			${headerHTML}
+			<fx-element-list class="${classMap(classes)}">
+				${baseTablesTemplatesArray}
+			</fx-element-list>
+		
+		`;
+
 	}
 
 

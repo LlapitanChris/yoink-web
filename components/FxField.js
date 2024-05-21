@@ -2,6 +2,7 @@ import { LitElement, html, css, nothing } from 'https://cdn.skypack.dev/lit-elem
 import './FxNameValuePair.js'
 import './FxModificationTag.js'
 import FxDatabaseElement from './FxDatabaseElement.js';
+import { FxDatabaseElementMixin } from '../mixins/FxDatabaseElementMixin.js';
 
 /* <Field id="15" name="UUID userName" fieldtype="Normal" datatype="Text" comment="">
 	<UUID modifications="2" userName="Kaz McLamore" accountName="Admin" timestamp="2022-06-04T13:56:49">A185470B-51F3-4036-9A4F-A4607B1B18DD</UUID>
@@ -14,39 +15,28 @@ import FxDatabaseElement from './FxDatabaseElement.js';
 </Field> */
 
 
-export default class FxField extends FxDatabaseElement {
+// add mixins
+let baseClass = LitElement;
+baseClass = FxDatabaseElementMixin(baseClass);
+
+
+export default class FxField extends baseClass {
 
 	constructor() {
 		super();
-		this._xmlNode;
-		this._xmlDocument
-		this.name = '';
 		this.autoenter = { prohibitModification: '', type: '' };
 
 	}
 
 	static get properties() {
 		return {
-			name: { type: String, state: true },
 			autoenter: { type: Object, state: true },
-			xmlNode: { type: Object },
 
 		}
 	}
 
-	static get styles() {
-
-		return [
-			super.styles,
-			css`
-			`
-		];
-	}
-
 	set xmlNode(value) {
-		super.xml = value;
-		this._xmlNode = value;
-		this.name = value.getAttribute('name');
+		super.xmlNode = value;
 		this.fieldType = value.getAttribute('fieldtype');
 		this.dataType = value.getAttribute('datatype');
 		this.autoenter.prohibitModification = value.querySelector('AutoEnter')?.getAttribute('prohibitModification');
@@ -55,12 +45,14 @@ export default class FxField extends FxDatabaseElement {
 
 	}
 
-	get xmlNode() {
-		return this._xmlNode;
+	createRenderRoot() { 
+		return this;
+	
 	}
 
-	lightDomTemplate() {
+	render() {
 		return html`
+		<fx-database-element class='bordered' .id=${this.id}>
 		<h2 slot='title'>${this.name}</h2>
 			<fx-name-value-pair .name=${`Field Type`}>${this.fieldType}</fx-name-value-pair>
 			<fx-name-value-pair .name=${`Data Type`}>${this.dataType}</fx-name-value-pair>
@@ -72,6 +64,8 @@ export default class FxField extends FxDatabaseElement {
 				</fx-name-value-pair>
 				` : nothing
 			}
+			${this.renderModificationTag()}
+		</fx-database-element>
 		`;
 
 	}

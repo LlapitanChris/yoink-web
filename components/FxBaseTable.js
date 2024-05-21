@@ -1,9 +1,13 @@
 // import LitElement from CDN
-import { html, css, nothing } from "https://cdn.skypack.dev/lit-element";
+import { LitElement, html, css, nothing } from "https://cdn.skypack.dev/lit-element";
+import { classMap } from "https://cdn.skypack.dev/lit-html/directives/class-map.js";
 import './FxNameValuePair.js';
 import './FxModificationTag.js';
 import './FxDatabaseElement.js';
-import FxDatabaseElement from "./FxDatabaseElement.js";
+import './FxTableOccurrence.js';
+
+// get mixins
+import { FxDatabaseElementMixin } from "../mixins/FxDatabaseElementMixin.js";
 
 /* this is the template for the base table xml
  * 	<BaseTable id="130" name="Base Table">
@@ -12,22 +16,21 @@ import FxDatabaseElement from "./FxDatabaseElement.js";
  *	</BaseTable>
  */
 
+let baseClass = LitElement;
+baseClass = FxDatabaseElementMixin(baseClass);
 
-export default class FxBaseTable extends FxDatabaseElement {
+export default class FxBaseTable extends baseClass {
 
 	constructor() {
 		super();
-		this._xmlNode;
-		this.xmlDocument;
-		this.name = '';
 		this.taglist = '';
 		this.fieldCatalog = {};
 		this.showingFields = false;
+		this.detailType = null;
 	}
 
 	static get properties() {
 		return {
-			name: { type: String, },
 			taglist: { type: String, },
 			fieldCount: { type: Number, },
 			occurrenceCount: { type: Number },
@@ -38,11 +41,8 @@ export default class FxBaseTable extends FxDatabaseElement {
 
 	set xmlNode(value) { 
 		// pass xml to base class to render UUID/id info
-		super.xml = value;
-		// set the xml node
-		this._xmlNode = value;
+		super.xmlNode = value;
 		try {
-			this.name = value.getAttribute('name');
 			this.taglist = value.querySelector('TagList').textContent;
 		} catch (error) {
 			console.error('error setting xml', error);
@@ -52,14 +52,10 @@ export default class FxBaseTable extends FxDatabaseElement {
 	
 	}
 
-	get xmlNode() { 
-		return this._xmlNode;
-	}
-
 	get fieldCount() { 
 		if (!this.xmlDocument) return 0;
-		return this.xpath(
-			`//FieldCatalog/BaseTableReference[@UUID='${this.uuid}']/following-sibling::ObjectList/@membercount`,
+		return super.xpath(
+			`//AddAction//FieldCatalog/BaseTableReference[@UUID='${this.uuid}']/following-sibling::ObjectList/@membercount`,
 			XPathResult.NUMBER_TYPE).numberValue;
 	}
 
@@ -67,9 +63,9 @@ export default class FxBaseTable extends FxDatabaseElement {
 		// if no xml document return nothing
 		if (!this.xmlDocument) return nothing;
 		// build xpath query
-		const xpath = `//FieldCatalog/BaseTableReference[@UUID='${this.uuid}']/following-sibling::ObjectList/Field`;
+		const xpath = `//AddAction//FieldCatalog/BaseTableReference[@UUID='${this.uuid}']/following-sibling::ObjectList/Field`;
 		// get the fields
-		const catalog = this.xpath(xpath, XPathResult.ORDERED_NODE_ITERATOR_TYPE);
+		const catalog = super.xpath(xpath, XPathResult.ORDERED_NODE_ITERATOR_TYPE);
 		// return xpath result
 		return catalog;
 	}
@@ -77,7 +73,7 @@ export default class FxBaseTable extends FxDatabaseElement {
 	get occurrenceXml() {
 		if (!this.xmlDocument) return nothing;
 
-		return this.xpath(
+		return super.xpath(
 			`//TableOccurrenceCatalog//BaseTableSourceReference/BaseTableReference[@UUID='${this.uuid}']/ancestor::TableOccurrence`,
 			XPathResult.ORDERED_NODE_ITERATOR_TYPE);
 	
@@ -86,39 +82,50 @@ export default class FxBaseTable extends FxDatabaseElement {
 	get occurrenceCount() { 
 		if (!this.xmlDocument) return 0;
 
-		return this.xpath(
+		return super.xpath(
 			`//TableOccurrenceCatalog//BaseTableSourceReference/BaseTableReference[@UUID='${this.uuid}']/ancestor::TableOccurrence`,
 			 XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE).snapshotLength;
 	}
 
-	static get styles() {
-		return [
-			super.styles,
-			css`
-
-		`];
+	createRenderRoot() {
+		return this;
 
 	}
 
-	lightDomTemplate() {
+	render() {
+		const detailClasses = {
+			'detail-viewer': true,
+			'hidden': !this.detailType,
+
+		};
 		return html`
+			<fx-database-element class='bordered' .id=${this.id}>
 			<h2 slot='title'><a href='/tables?id=${this.id}' @click=${route}>${this.name}</a></h2>
-			<fx-name-value-pair .name=${`tags`}>${this.taglist||'none'}</fx-name-value-pair>
+			<fx-name-value-pair .name=${`tags`}>${this.taglist || 'none'}</fx-name-value-pair>
+			
 			<fx-name-value-pair .name=${`fields`} 
 				@click=${this.toggleDetailType.bind(this, 'fields')} 
 				class='link'
-			>
-				${this.fieldCount}
+			>${this.fieldCount}
 			</fx-name-value-pair>
 				
 			<fx-name-value-pair .name=${`occurrences`} 
 				@click=${this.toggleDetailType.bind(this, 'occurrences')} 
 				class='link'
-			>
-				${this.occurrenceCount}
+			>${this.occurrenceCount}
 			</fx-name-value-pair>
 
-			${this.detailTemplate()}
+			${
+			this.detailType == null ? nothing :
+			html`
+			<div class=${classMap(detailClasses)}>
+					${this.detailTemplate()}
+				</div>`
+			}
+				
+
+			${this.renderModificationTag()}
+			</fx-database-element>
 		`;
 	}
 
@@ -141,7 +148,9 @@ export default class FxBaseTable extends FxDatabaseElement {
 		let templates = [];
 		while (item) {
 			const name = item.getAttribute('name');
-			const template = html`<div>${name}</div>`;
+			const template = html`
+				<fx-table-occurrence .xmlNode=${item} .xmlDocument=${this.xmlDocument} class='bordered'></fx-table-occurrence>
+			`;
 			templates.push(template);
 			item = catalog.iterateNext();
 		}
