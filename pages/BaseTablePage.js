@@ -3,18 +3,15 @@ import { LitElement, html } from 'https://cdn.skypack.dev/lit-element';
 // import the task from CDN
 import { classMap } from 'https://cdn.skypack.dev/lit-html/directives/class-map';
 
-
-
 // import sub components
 import '../components/FxBaseTable.js';
-import '../components/FxField.js';
 import '../components/FxElementList.js';
+import '../components/FxPage.js';
 
 export default class TablePage extends LitElement {
 
 	constructor() {
 		super();
-		this.fragment;
 		this.id;
 		this.xml;
 		this.display = 'list'
@@ -23,7 +20,6 @@ export default class TablePage extends LitElement {
 	static get properties() {
 		return {
 			id: { type: String },
-			fragment: { type: Object },
 			display: { type: String, reflect: true },
 		}
 
@@ -41,20 +37,16 @@ export default class TablePage extends LitElement {
 
 		// get the parent
 		const parent = this.closest('fx-app');
-		const xml = parent.xml;
-
-		// add page class
-		this.classList.add('page');
-
+		const xml = parent.xmlDocument;
 
 		let headerHTML, baseTables;
 
 		if (this.id) {
-			headerHTML = html`<h1 class='page-title'>Base Table ${this.id}</h1>`;
+			headerHTML = html`<h1 slot='title'>Base Table ${this.id}</h1>`;
 			baseTables = xml.evaluate(`//BaseTable[@id="${this.id}"]`, xml, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
 
 		} else {
-			headerHTML = html`<h1 class='page-title'>Base Table List</h1>`;
+			headerHTML = html`<h1 slot='title'>Base Table List</h1>`;
 			baseTables = xml.evaluate('//BaseTable', xml, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
 		}
 
@@ -70,16 +62,18 @@ export default class TablePage extends LitElement {
 		}
 
 		const classes = {
-			'grid': this.display === 'grid',
-			'flex': this.display === 'flex',
-			'list': this.display === 'list'
+			grid: this.display === 'grid',
+			flex: this.display === 'flex',
+			list: this.display === 'list'
 		}
 
 		return html`
-			${headerHTML}
-			<fx-element-list class="${classMap(classes)}">
-				${baseTablesTemplatesArray}
-			</fx-element-list>
+			<fx-page display=${this.display}>
+				${headerHTML}
+				<fx-element-list class=${classMap(classes)}>
+					${baseTablesTemplatesArray}
+				</fx-element-list>
+			</fx-page>
 		
 		`;
 

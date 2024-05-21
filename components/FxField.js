@@ -1,7 +1,6 @@
-import { LitElement, html, css, nothing } from 'https://cdn.skypack.dev/lit-element';
+import { LitElement, html, nothing } from 'https://cdn.skypack.dev/lit-element';
 import './FxNameValuePair.js'
-import './FxModificationTag.js'
-import FxDatabaseElement from './FxDatabaseElement.js';
+import './FxDatabaseElement.js'
 import { FxDatabaseElementMixin } from '../mixins/FxDatabaseElementMixin.js';
 
 /* <Field id="15" name="UUID userName" fieldtype="Normal" datatype="Text" comment="">
@@ -37,6 +36,11 @@ export default class FxField extends baseClass {
 
 	set xmlNode(value) {
 		super.xmlNode = value;
+		console.log('FxField xmlNode', value);
+		if (!value) {
+			console.error('no xml node passed to FxField');
+			return;
+		}
 		this.fieldType = value.getAttribute('fieldtype');
 		this.dataType = value.getAttribute('datatype');
 		this.autoenter.prohibitModification = value.querySelector('AutoEnter')?.getAttribute('prohibitModification');
@@ -53,11 +57,12 @@ export default class FxField extends baseClass {
 	render() {
 		return html`
 		<fx-database-element class='bordered' .id=${this.id}>
-		<h2 slot='title'>${this.name}</h2>
+			<h2 slot='title'>${this.name}</h2>
 			<fx-name-value-pair .name=${`Field Type`}>${this.fieldType}</fx-name-value-pair>
 			<fx-name-value-pair .name=${`Data Type`}>${this.dataType}</fx-name-value-pair>
 			${
-			this.isAutoEnter ? html`
+			this.isAutoEnter ?
+				html`
 				<fx-name-value-pair .name=${`AutoEnter`}>
 					<fx-name-value-pair .name=${`Type`}>${this.autoenter.type}</fx-name-value-pair>
 					<fx-name-value-pair .name=${`Prohibit Modification`}>${this.autoenter.prohibitModification}</fx-name-value-pair>

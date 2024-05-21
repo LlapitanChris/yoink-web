@@ -22,7 +22,7 @@ export default class FxApp extends LitElement {
 	static get properties() {
 		return {
 			path: { type: String },
-			xml: { type: Object },
+			xmlDocument: { type: Object },
 			pathToXml: { type: String, reflect: true, attribute: 'path-to-xml'},
 		}
 
@@ -98,7 +98,7 @@ export default class FxApp extends LitElement {
 			let xml = await fetch(this._pathToXml).then(response => response.text())
 			const parser = new DOMParser()
 			const xmlDoc = parser.parseFromString(xml, 'text/xml')
-			this.xml = xmlDoc;
+			this.xmlDocument = xmlDoc;
 			console.debug('xmlDoc:', xmlDoc)
 		} catch (error) {
 			console.error('Error occurred in fetchXml:', error)

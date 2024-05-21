@@ -2,7 +2,7 @@
 import { LitElement, html, css, nothing } from "https://cdn.skypack.dev/lit-element";
 import { classMap } from "https://cdn.skypack.dev/lit-html/directives/class-map.js";
 import './FxNameValuePair.js';
-import './FxModificationTag.js';
+import './FxField.js';
 import './FxDatabaseElement.js';
 import './FxTableOccurrence.js';
 
@@ -61,7 +61,10 @@ export default class FxBaseTable extends baseClass {
 
 	get fieldsXml() {
 		// if no xml document return nothing
-		if (!this.xmlDocument) return nothing;
+		if (!this.xmlDocument) {
+			console.error('no xml document');
+			return nothing;
+		};
 		// build xpath query
 		const xpath = `//AddAction//FieldCatalog/BaseTableReference[@UUID='${this.uuid}']/following-sibling::ObjectList/Field`;
 		// get the fields
