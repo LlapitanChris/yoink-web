@@ -5,6 +5,7 @@ import '../pages/HomePage.js';
 import '../pages/AboutPage.js';
 import '../pages/BaseTablePage.js';
 import '../pages/FieldsPage.js';
+import '../pages/CatalogPage.js';
 
 
 export default class FxApp extends LitElement {
@@ -17,7 +18,8 @@ export default class FxApp extends LitElement {
 			'/index.html': 'fx-home-page',
 			'/about': 'fx-about-page',
 			'/table': 'fx-table-page',
-			'/field': 'fx-field-page'
+			'/field': 'fx-field-page',
+			'/catalog': 'fx-catalog-page'
 		}
 	}
 

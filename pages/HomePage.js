@@ -1,8 +1,12 @@
 import { LitElement, html } from 'https://cdn.skypack.dev/lit-element';
 
 import '../components/FxPage.js';
+import '../components/FxDataTable.js';
+import { FxDataPageMixin } from '../mixins/FxDataPageMixin.js';
 
-export default class HomePage extends LitElement { 
+const baseClass = FxDataPageMixin(LitElement);
+
+export default class HomePage extends baseClass { 
 	createRenderRoot () {
 		return this;
 	}
@@ -12,9 +16,10 @@ export default class HomePage extends LitElement {
 		<fx-page>
 			<h1 slot='title'>Home Page</h1>
 			<p>This is the home page</p>
-			<a href="/about" @click=${route}>About</a>
+			<a href="/catalog" @click=${route}>Catalogs</a>
 			<a href="/table" @click=${route}>Tables</a>
 			<a href="/field" @click=${route}>Fields</a>
+			<a href="/about" @click=${route}>About</a>
 		</fx-page>
 		`;
 	}

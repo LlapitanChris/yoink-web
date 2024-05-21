@@ -152,4 +152,23 @@ fx-database-element fx-database-element {
 		opacity: 0;
 	}
 	
+	
+}
+
+fx-data-table {
+}
+
+fx-data-table td {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	padding: 0 0.5rem;
+}
+
+fx-data-table th {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	text-align: left;
+	padding: 0 0.5rem;
 }
