@@ -45,6 +45,12 @@ export default class FxField extends baseClass {
 		this.autoenter.prohibitModification = value.querySelector('AutoEnter')?.getAttribute('prohibitModification');
 		this.autoenter.type = value.querySelector('AutoEnter')?.getAttribute('type');
 		this.isAutoEnter = this.autoenter.type ? true : false;
+		const catalogRef = value.parentElement.parentElement
+		console.log('catalogRef', catalogRef)
+		const tableRef = catalogRef.querySelector('BaseTableReference');
+		console.log('tableRef', tableRef)
+		this.tableName = tableRef.getAttribute('name');
+		this.tableId = tableRef.getAttribute('id');
 
 	}
 
@@ -59,6 +65,7 @@ export default class FxField extends baseClass {
 			<h2 slot='title'>${this.name}</h2>
 			<fx-name-value-pair .name=${`Field Type`}>${this.fieldType}</fx-name-value-pair>
 			<fx-name-value-pair .name=${`Data Type`}>${this.dataType}</fx-name-value-pair>
+			<fx-name-value-pair href='table?id=${this.tableId}' @click=${route} .name=${`Table`}>${this.tableName}</fx-name-value-pair>
 			${
 			this.isAutoEnter ?
 				html`

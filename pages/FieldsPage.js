@@ -38,6 +38,11 @@ export default class FieldsPage extends baseClass {
 		if (this.id) {
 			
 		} else if (this.tableId) {
+			headerHTML = html`<h1 slot='title'>Field List for Table ${this.tableId}</h1>`;
+			fieldNodes = super.xpath(
+				`//AddAction//FieldCatalog/BaseTableReference[@id='${this.tableId}']/following-sibling::ObjectList/Field`,
+				XPathResult.ORDERED_NODE_ITERATOR_TYPE
+			);
 			
 		} else {
 			headerHTML = html`<h1 slot='title'>Field List</h1>`;

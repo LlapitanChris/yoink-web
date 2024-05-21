@@ -13,8 +13,8 @@ export default class HomePage extends LitElement {
 			<h1 slot='title'>Home Page</h1>
 			<p>This is the home page</p>
 			<a href="/about" @click=${route}>About</a>
-			<a href="/tables" @click=${route}>Tables</a>
-			<a href="/fields" @click=${route}>Fields</a>
+			<a href="/table" @click=${route}>Tables</a>
+			<a href="/field" @click=${route}>Fields</a>
 		</fx-page>
 		`;
 	}

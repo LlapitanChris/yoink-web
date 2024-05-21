@@ -103,7 +103,7 @@ export default class FxBaseTable extends baseClass {
 		};
 		return html`
 			<fx-database-element class='bordered' .id=${this.id}>
-			<h2 slot='title'><a href='/tables?id=${this.id}' @click=${route}>${this.name}</a></h2>
+			<h2 slot='title'><a href='/table?id=${this.id}' @click=${route}>${this.name}</a></h2>
 			<fx-name-value-pair .name=${`tags`}>${this.taglist || 'none'}</fx-name-value-pair>
 			
 			<fx-name-value-pair .name=${`fields`} 
@@ -169,7 +169,7 @@ export default class FxBaseTable extends baseClass {
 	detailTemplate() {
 		switch (this.detailType) {
 			case 'fields':
-				return html`<h2 class='detail-title'>Fields</h2><div class='element-detail'>${this.fieldsTemplate()}</div>`;
+				return html`<h2 class='detail-title'><a href='/field?tableId=${this.id}' @click=${route}>Fields</a></h2><div class='element-detail'>${this.fieldsTemplate()}</div>`;
 			case 'occurrences':
 				return html`<h2 class='detail-title'>Occurrences</h2><div class='element-detail'>${this.occurrencesTemplate()}</div>`;
 			default:

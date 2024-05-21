@@ -16,8 +16,8 @@ export default class FxApp extends LitElement {
 			'/': 'fx-home-page',
 			'/index.html': 'fx-home-page',
 			'/about': 'fx-about-page',
-			'/tables': 'fx-table-page',
-			'/fields': 'fx-field-page'
+			'/table': 'fx-table-page',
+			'/field': 'fx-field-page'
 		}
 	}
 
@@ -25,7 +25,8 @@ export default class FxApp extends LitElement {
 		return {
 			path: { type: String },
 			xmlDocument: { type: Object },
-			pathToXml: { type: String, reflect: true, attribute: 'path-to-xml'},
+			pathToXml: { type: String, reflect: true, attribute: 'path-to-xml' },
+			routes: { type: Object }
 		}
 
 	}
@@ -65,19 +66,19 @@ export default class FxApp extends LitElement {
 		const path = window.location.pathname;
 		this.path = path;
 		// get the component name
-		const componentName = this.routes[path];
+		const componentName = this.routes?.[path] || '';
 		// get the component
-		const component = customElements.get(componentName);
+		const component = componentName ? customElements.get(componentName): null;
 
 		if (!component) {
-			console.error('Component not found');
-			return;
+			console.error(`Component ${componentName} not found for path ${path}`);
+		} else {
+			// create the component
+			const element = document.createElement(componentName);
+			// replace the children
+			this.replaceChildren(element);
 		}
 
-		// create the component
-		const element = document.createElement(componentName);
-		// replace the children
-		this.replaceChildren(element);
 
 	}
 
