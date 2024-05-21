@@ -46,9 +46,7 @@ export default class FxField extends baseClass {
 		this.autoenter.type = value.querySelector('AutoEnter')?.getAttribute('type');
 		this.isAutoEnter = this.autoenter.type ? true : false;
 		const catalogRef = value.parentElement.parentElement
-		console.log('catalogRef', catalogRef)
 		const tableRef = catalogRef.querySelector('BaseTableReference');
-		console.log('tableRef', tableRef)
 		this.tableName = tableRef.getAttribute('name');
 		this.tableId = tableRef.getAttribute('id');
 

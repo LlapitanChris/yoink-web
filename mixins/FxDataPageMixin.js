@@ -1,3 +1,6 @@
+import '../components/FxPage.js';
+import { html } from 'https://cdn.skypack.dev/lit-element';
+import { classMap } from 'https://cdn.skypack.dev/lit-html/directives/class-map';	
 
 export const FxDataPageMixin = (baseClass) => class extends baseClass { 
 
@@ -5,6 +8,11 @@ export const FxDataPageMixin = (baseClass) => class extends baseClass {
 		return {
 			xmlDocument: { type: Object },
 		}
+	}
+
+	// no shadow dom
+	createRenderRoot() {
+		return this;
 	}
 
 	setPropsFromUrl() {
@@ -36,4 +44,49 @@ export const FxDataPageMixin = (baseClass) => class extends baseClass {
 		}
 		return this.xmlDocument.evaluate(query, this.xmlDocument, null, type, null);
 	}
+
+	render() {
+		// get parameters from url
+		this.setPropsFromUrl();
+
+		const classes = {
+			grid: this.display === 'grid',
+			flex: this.display === 'flex',
+			list: this.display === 'list'
+		}
+
+		// see if we've implemented the headerTemplate and elementsTemplate functions
+		if (!this.headerTemplate) {
+			console.error('headerTemplate function not implemented');
+		}
+		if (!this.elementsTemplate) {
+			console.error('elementsTemplate function not implemented');
+		}
+
+		return html`
+			<fx-page>
+				${this.headerTemplate()}
+				<fx-element-list class="${classMap(classes)}">
+					${this.elementsTemplate()}
+				</fx-element-list>
+			</fx-page>
+		`;
+	}
+
+	createComponentsFromXml(query, tagName) {
+		// create the components from the xml
+		const nodes = this.xpath(query, XPathResult.ORDERED_NODE_ITERATOR_TYPE);
+		let node = nodes.iterateNext();
+		const components = [];
+		while (node) {
+			// create the component
+			const component = document.createElement(tagName);
+			component.xmlNode = node;
+			component.xmlDocument = this.xmlDocument;
+			components.push(component);
+			node = nodes.iterateNext();
+		}
+		return components;
+	}
+
 }

@@ -1,9 +1,7 @@
 import { LitElement, html } from 'https://cdn.skypack.dev/lit-element';
 import { FxDataPageMixin } from "../mixins/FxDataPageMixin.js";
-import { classMap } from 'https://cdn.skypack.dev/lit-html/directives/class-map';
-import '../components/FxPage.js';
 import '../components/FxField.js';
-import '../components/FxElementList.js';
+import FxField from '../components/FxField.js';
 
 const baseClass = FxDataPageMixin(LitElement);
 
@@ -25,59 +23,36 @@ export default class FieldsPage extends baseClass {
 
 	}
 
-	createRenderRoot() {
-		return this;
-	}
-
-	render() {
-		// get parameters from url
-		super.setPropsFromUrl();
-
-		let headerHTML, fieldNodes;
-		// get the XML Nodes
+	get xpathString() {
 		if (this.id) {
-			
+			return `//AddAction//FieldCatalog/ObjectList/Field[@id='${this.id}']`;
 		} else if (this.tableId) {
-			headerHTML = html`<h1 slot='title'>Field List for Table ${this.tableId}</h1>`;
-			fieldNodes = super.xpath(
-				`//AddAction//FieldCatalog/BaseTableReference[@id='${this.tableId}']/following-sibling::ObjectList/Field`,
-				XPathResult.ORDERED_NODE_ITERATOR_TYPE
-			);
-			
+			return `//AddAction//FieldCatalog/BaseTableReference[@id='${this.tableId}']/following-sibling::ObjectList/Field`;
 		} else {
-			headerHTML = html`<h1 slot='title'>Field List</h1>`;
-			fieldNodes = super.xpath(
-				'//AddAction//FieldCatalog/ObjectList/Field',
-				XPathResult.ORDERED_NODE_ITERATOR_TYPE
-			);
+			return '//AddAction//FieldCatalog/ObjectList/Field';
 		}
 
-		// create the fields from the xml
-		let fieldNode = fieldNodes.iterateNext();
-		const fieldTemplatesArray = [];
-		while (fieldNode) {
-			const fieldTemplate = html`
-				<fx-field .xmlNode=${fieldNode} .xmlDocument=${this.xmlDocument}></fx-field>`;
-			fieldTemplatesArray.push(fieldTemplate);
-			fieldNode = fieldNodes.iterateNext();
-		}
-
-		const classes = {
-			grid: this.display === 'grid',
-			list: this.display === 'list',
-			flex: this.display === 'flex'
-		}
-
-		return html`
-		
-		<fx-page>
-			${headerHTML}
-			<fx-element-list class="${classMap(classes)}">
-				${fieldTemplatesArray}
-			</fx-element-list>
-		</fx-page>
-		`
 	}
+
+	// define header template,
+	// this will be called by the mixin render function
+	headerTemplate() {
+		if (this.id) {
+			return html`<h1 slot='title'>Field ${this.id}</h1>`;
+		} else if (this.tableId) {
+			return html`<h1 slot='title'>Field List for Table ${this.tableId}</h1>`;
+		} else {
+			return html`<h1 slot='title'>Field List</h1>`;
+		}
+	}
+
+	// define elements template,
+	// this will be called by the mixin render function
+	elementsTemplate() {
+		return super.createComponentsFromXml(this.xpathString, 'fx-field');
+	}
+
+
 
 
 }
