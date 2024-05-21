@@ -32,11 +32,6 @@ export default class FxDatabaseElement extends LitElement {
 				overflow: hidden;
 			}
 
-			:host(.bordered) {
-				border: 1px solid black;
-				border-radius: 5px;
-			}
-
 
 			#title {
 				border-bottom: 1px solid black;

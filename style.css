@@ -84,6 +84,9 @@ a:hover {
 
 fx-database-element {
 	--title-size: 1.25rem;
+	background-color: #f1efef;
+	border: 1px solid #c5c5c5;
+	border-radius: 10px;
 }
 
 fx-database-element fx-database-element {

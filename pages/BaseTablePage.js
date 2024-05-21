@@ -8,12 +8,17 @@ import '../components/FxBaseTable.js';
 import '../components/FxElementList.js';
 import '../components/FxPage.js';
 
-export default class TablePage extends LitElement {
+// import the mixin
+import { FxDataPageMixin } from '../mixins/FxDataPageMixin.js';
+
+// create the class
+const baseClass = FxDataPageMixin(LitElement);
+
+export default class TablePage extends baseClass {
 
 	constructor() {
 		super();
 		this.id;
-		this.xml;
 		this.display = 'list'
 	}
 
@@ -35,28 +40,23 @@ export default class TablePage extends LitElement {
 		const url = new URL(window.location);
 		this.id = url.searchParams.get('id');
 
-		// get the parent
-		const parent = this.closest('fx-app');
-		const xml = parent.xmlDocument;
-
 		let headerHTML, baseTables;
 
+		// get the XML
 		if (this.id) {
 			headerHTML = html`<h1 slot='title'>Base Table ${this.id}</h1>`;
-			baseTables = xml.evaluate(`//BaseTable[@id="${this.id}"]`, xml, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
-
+			baseTables = super.xpath(`//BaseTable[@id="${this.id}"]`, XPathResult.ORDERED_NODE_ITERATOR_TYPE);
 		} else {
 			headerHTML = html`<h1 slot='title'>Base Table List</h1>`;
-			baseTables = xml.evaluate('//BaseTable', xml, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
+			baseTables = super.xpath('//BaseTable', XPathResult.ORDERED_NODE_ITERATOR_TYPE);
 		}
 
-
-		// create the base tables from the xml
+		// create the base table(s) from the xml
 		let baseTable = baseTables.iterateNext();
 		const baseTablesTemplatesArray = [];
 		while (baseTable) {
 			const baseTableTemplate = html`
-				<fx-base-table class='bordered' .xmlNode=${baseTable} .xmlDocument=${xml}></fx-base-table>`;
+				<fx-base-table class='bordered' .xmlNode=${baseTable} .xmlDocument=${this.xmlDocument}></fx-base-table>`;
 			baseTablesTemplatesArray.push(baseTableTemplate);
 			baseTable = baseTables.iterateNext();
 		}
@@ -67,6 +67,9 @@ export default class TablePage extends LitElement {
 			list: this.display === 'list'
 		}
 
+		// return the template
+		// render a page element with the header and put 
+		// the base tables in an element list
 		return html`
 			<fx-page display=${this.display}>
 				${headerHTML}
@@ -74,7 +77,6 @@ export default class TablePage extends LitElement {
 					${baseTablesTemplatesArray}
 				</fx-element-list>
 			</fx-page>
-		
 		`;
 
 	}

@@ -1,5 +1,5 @@
 
-export default FxPageMixin = (baseClass) => class extends baseClass { 
+export const FxDataPageMixin = (baseClass) => class extends baseClass { 
 
 	static get properties() { 
 		return {
@@ -13,8 +13,11 @@ export default FxPageMixin = (baseClass) => class extends baseClass {
 		if (!parent) {
 			console.error('no parent app element found, this element must be a child of fx-app with the xml property set.');
 			return;
+		} else if (!parent.xmlDocument) {
+			console.error('no xml property found on parent app element');
+			return;
 		}
-		return parent.xml;
+		return parent.xmlDocument;
 	}
 
 

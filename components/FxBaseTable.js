@@ -137,7 +137,7 @@ export default class FxBaseTable extends baseClass {
 		let item = catalog.iterateNext();
 		let templates = []
 		while (item) {
-			const template = html`<fx-field .xmlNode=${item} .xmlDocument=${this.xmlDocument} class='bordered'></fx-field>`;
+			const template = html`<fx-field .xmlNode=${item} .xmlDocument=${this.xmlDocument}></fx-field>`;
 			templates.push(template);
 			item = catalog.iterateNext();
 		}
@@ -152,7 +152,7 @@ export default class FxBaseTable extends baseClass {
 		while (item) {
 			const name = item.getAttribute('name');
 			const template = html`
-				<fx-table-occurrence .xmlNode=${item} .xmlDocument=${this.xmlDocument} class='bordered'></fx-table-occurrence>
+				<fx-table-occurrence .xmlNode=${item} .xmlDocument=${this.xmlDocument}></fx-table-occurrence>
 			`;
 			templates.push(template);
 			item = catalog.iterateNext();

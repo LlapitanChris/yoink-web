@@ -36,7 +36,6 @@ export default class FxField extends baseClass {
 
 	set xmlNode(value) {
 		super.xmlNode = value;
-		console.log('FxField xmlNode', value);
 		if (!value) {
 			console.error('no xml node passed to FxField');
 			return;
@@ -56,7 +55,7 @@ export default class FxField extends baseClass {
 
 	render() {
 		return html`
-		<fx-database-element class='bordered' .id=${this.id}>
+		<fx-database-element .id=${this.id}>
 			<h2 slot='title'>${this.name}</h2>
 			<fx-name-value-pair .name=${`Field Type`}>${this.fieldType}</fx-name-value-pair>
 			<fx-name-value-pair .name=${`Data Type`}>${this.dataType}</fx-name-value-pair>

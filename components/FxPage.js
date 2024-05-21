@@ -43,9 +43,6 @@ export default class FxPage extends LitElement {
 				border-bottom: 1px solid black;
 			}
 
-			fx-element-list {
-				padding-top: 1rem;
-			}
 			`;
 	}
 
