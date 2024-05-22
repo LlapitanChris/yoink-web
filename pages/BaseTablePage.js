@@ -7,6 +7,7 @@ import { classMap } from 'https://cdn.skypack.dev/lit-html/directives/class-map'
 import '../components/FxBaseTable.js';
 import '../components/FxElementList.js';
 import '../components/FxPage.js';
+import '../components/FxDataTable.js';
 
 // import the mixin
 import { FxDataPageMixin } from '../mixins/FxDataPageMixin.js';
@@ -50,31 +51,47 @@ export default class TablePage extends baseClass {
 			baseTables = super.xpath('//BaseTable', XPathResult.ORDERED_NODE_ITERATOR_TYPE);
 		}
 
-		// create the base table(s) from the xml
-		let baseTable = baseTables.iterateNext();
-		const baseTablesTemplatesArray = [];
-		while (baseTable) {
-			const baseTableTemplate = html`
-				<fx-base-table class='bordered' .xmlNode=${baseTable} .xmlDocument=${this.xmlDocument}></fx-base-table>`;
-			baseTablesTemplatesArray.push(baseTableTemplate);
-			baseTable = baseTables.iterateNext();
+		// create a table of the data
+		const columnsTemplate = () => {
+			return html`
+				<tr>
+					<th>Base Table</th>
+					<th>Mod Count</th>
+					<th>Username</th>
+					<th>Account Name</th>
+					<th>Timestamp</th>
+				</tr>
+			`;
 		}
 
-		const classes = {
-			grid: this.display === 'grid',
-			flex: this.display === 'flex',
-			list: this.display === 'list'
+		const rowTemplate = (baseTable) => { 
+			const id = baseTable.getAttribute('id');
+			return html`
+				<tr>
+					<td @click=${route} href=${`/table?id=${id}`}>${baseTable.getAttribute('name')}</td>
+					<td>${baseTable.querySelector('UUID')?.getAttribute('modifications')}</td>
+					<td>${baseTable.querySelector('UUID')?.getAttribute('userName')}</td>
+					<td>${baseTable.querySelector('UUID')?.getAttribute('accountName')}</td>
+					<td>${new Date(baseTable.querySelector('UUID')?.getAttribute('timestamp')).toLocaleString()}</td>
+				</tr>
+			`;
 		}
 
-		// return the template
-		// render a page element with the header and put 
-		// the base tables in an element list
+		const tableData = html`
+			<fx-data-table .data=${baseTables} .columnsTemplate=${columnsTemplate} .rowTemplate=${rowTemplate}></fx-data-table>
+		`;
+
+		const detailViewTemplate = () => { 
+			return html`
+				<fx-base-table .xmlNode=${baseTables.iterateNext()} .xmlDocument=${this.xmlDocument}></fx-base-table>
+			`;
+		
+		}
+
 		return html`
 			<fx-page>
 				${headerHTML}
-				<fx-element-list class=${classMap(classes)}>
-					${baseTablesTemplatesArray}
-				</fx-element-list>
+				${this.id ? detailViewTemplate() : tableData}
 			</fx-page>
 		`;
 

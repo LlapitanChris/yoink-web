@@ -6,6 +6,11 @@ import '../pages/AboutPage.js';
 import '../pages/BaseTablePage.js';
 import '../pages/FieldsPage.js';
 import '../pages/CatalogPage.js';
+import '../pages/FileAccessPage.js';
+import '../pages/TableOccurrencePage.js';
+import '../pages/ScriptPage.js';
+import '../pages/ScriptStepPage.js';
+
 
 
 export default class FxApp extends LitElement {
@@ -19,7 +24,11 @@ export default class FxApp extends LitElement {
 			'/about': 'fx-about-page',
 			'/table': 'fx-table-page',
 			'/field': 'fx-field-page',
-			'/catalog': 'fx-catalog-page'
+			'/catalog': 'fx-catalog-page',
+			'/file-access': 'fx-file-access-page',
+			'/table-occurrence': 'fx-table-occurrence-page',
+			'/script': 'fx-script-page',
+			'/script-step': 'fx-script-step-page'
 		}
 	}
 

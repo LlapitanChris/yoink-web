@@ -29,13 +29,14 @@ export default class FxDataTable extends LitElement {
 	}
 
 	render() {
+		const options = { indentLevel: 0 };
 		return html`
 			<table part='table'>
 				<thead>
 						${this.columnsTemplate()}
 				</thead>
 				<tbody>
-					${this.data.map((row) => this.rowTemplate(row))}
+					${this.data.map((row) => this.rowTemplate(row, options))}
 				</tbody>
 			</table>
 		`;

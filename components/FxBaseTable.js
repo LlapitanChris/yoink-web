@@ -92,7 +92,6 @@ export default class FxBaseTable extends baseClass {
 
 	createRenderRoot() {
 		return this;
-
 	}
 
 	render() {

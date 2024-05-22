@@ -46,7 +46,7 @@ table {
 
 body {
 	box-sizing: border-box;
-	font-family: 'Open Sans', sans-serif;
+	font-family: 'courier new', 'courier', 'monospace';
 	background-color: #f0f0f0;
 	font-size: 1rem;
 	box-sizing: border-box;
@@ -156,13 +156,20 @@ fx-database-element fx-database-element {
 }
 
 fx-data-table {
+	overflow: auto;
+}
+
+fx-data-table table {
+	width: 100%;
+	border-collapse: collapse;
+	table-layout: auto;
 }
 
 fx-data-table td {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	padding: 0 0.5rem;
+	padding: 0.1rem 0.5rem;
 }
 
 fx-data-table th {
@@ -171,4 +178,43 @@ fx-data-table th {
 	white-space: nowrap;
 	text-align: left;
 	padding: 0 0.5rem;
+}
+
+pre.padding{
+	display: inline-block;
+	padding: 0;
+	margin: 0;
+}
+
+fx-script-step-page table{
+	width: 100%;
+	table-layout: fixed;
+}
+
+fx-script-step-page {
+	font-size: .8rem;
+}
+
+
+fx-script-step-page fx-data-table td:first-of-type, 
+fx-script-step-page fx-data-table th:first-of-type{
+	width: 4ch;
+}
+
+fx-script-step-page fx-data-table td:nth-of-type(2), 
+fx-script-step-page fx-data-table th:nth-of-type(2){
+	width: 100%;
+}
+
+fx-script-step-page fx-data-table td:nth-of-type(3), 
+fx-script-step-page fx-data-table th:nth-of-type(3){
+	width: 4ch;
+}
+
+tr.logic {
+	color: blue
+}
+
+tr.comment {
+	color: green;
 }

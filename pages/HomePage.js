@@ -18,7 +18,12 @@ export default class HomePage extends baseClass {
 			<p>This is the home page</p>
 			<a href="/catalog" @click=${route}>Catalogs</a>
 			<a href="/table" @click=${route}>Tables</a>
+			<a href="/table-occurrence" @click=${route}>Table Occurrences</a>
+			<a href="/script" @click=${route}>Script</a>
+			<a href="/script-step" @click=${route}>Script Steps</a>
+
 			<a href="/field" @click=${route}>Fields</a>
+			<a href="/file-access" @click=${route}>File Accesses</a>
 			<a href="/about" @click=${route}>About</a>
 		</fx-page>
 		`;
