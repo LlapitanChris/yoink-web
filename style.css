@@ -57,6 +57,13 @@ body {
 
 }
 
+/* two columns layout */
+#apps-container {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: 1fr;
+}
+
 a {
 	text-decoration: none;
 	color: inherit;

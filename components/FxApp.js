@@ -55,10 +55,31 @@ export default class FxApp extends LitElement {
 
 
 	render() {
+		if (!this.xmlDocument) { 
+			return html`
+			<form>
+				<label for="file-upload">Upload an XML file:</label>
+				<input type="file" id="file-upload" name="file-upload">
+				<button type="submit" @click=${this.readFile}>Submit</button>
+			</form>
+			`
+		}
 		return html`
 		<slot></slot>
 		`
 
+	}
+
+	readFile(event) { 
+		event.preventDefault();
+		const file = this.renderRoot.querySelector('#file-upload').files[0];
+		const reader = new FileReader();
+		reader.onload = (event) => { 
+			const xmlDoc = new DOMParser().parseFromString(event.target.result, 'text/xml');
+			this.xmlDocument = xmlDoc;
+		}
+		reader.readAsText(file);
+	
 	}
 
 	// general route function that will be override the click event
