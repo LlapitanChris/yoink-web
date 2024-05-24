@@ -25,8 +25,8 @@ export const FxDatabaseElementMixin = (superclass) => class extends superclass {
 			console.error('no xml node passed to FxDatabaseElementMixin');
 			return;
 		}
-
-		this._xml = value;
+		
+		this._xmlNode = value;
 		// get the id, name
 		this.id = value.getAttribute('id');
 		this.name = value.getAttribute('name');
@@ -49,7 +49,7 @@ export const FxDatabaseElementMixin = (superclass) => class extends superclass {
 	}
 
 	get xmlNode() {
-		return this._xml;
+		return this._xmlNode;
 	}
 
 	get uuidXml() {

@@ -9,14 +9,14 @@ export default class FieldsPage extends baseClass {
 
 	constructor() {
 		super();
-		this.id;
+		this.uuid;
 		this.tableId;
 		this.display = 'list'
 	}
 
 	static get properties() {
 		return {
-			id: { type: String },
+			uuid: { type: String },
 			display: { type: String, reflect: true },
 			tableId: { type: String }
 		}
@@ -24,8 +24,8 @@ export default class FieldsPage extends baseClass {
 	}
 
 	get xpathString() {
-		if (this.id) {
-			return `//AddAction//FieldCatalog/ObjectList/Field[@id='${this.id}']`;
+		if (this.uuid) {
+			return `//AddAction//FieldCatalog/ObjectList/Field/UUID[text()='${this.uuid}']/parent::Field`;
 		} else if (this.tableId) {
 			return `//AddAction//FieldCatalog/BaseTableReference[@id='${this.tableId}']/following-sibling::ObjectList/Field`;
 		} else {
@@ -37,8 +37,8 @@ export default class FieldsPage extends baseClass {
 	// define header template,
 	// this will be called by the mixin render function
 	headerTemplate() {
-		if (this.id) {
-			return html`<h1 slot='title'>Field ${this.id}</h1>`;
+		if (this.uuid) {
+			return html`<h1 slot='title'>Field ${this.uuid}</h1>`;
 		} else if (this.tableId) {
 			return html`<h1 slot='title'>Field List for Table ${this.tableId}</h1>`;
 		} else {
@@ -50,7 +50,7 @@ export default class FieldsPage extends baseClass {
 		// get parameters from url
 		super.setPropsFromUrl();
 
-		if (this.id) {
+		if (this.uuid) {
 			const field = super.xpath(this.xpathString, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue;
 			return html`
 				<fx-page>

@@ -180,11 +180,7 @@ fx-data-table th {
 	padding: 0 0.5rem;
 }
 
-pre.padding{
-	display: inline-block;
-	padding: 0;
-	margin: 0;
-}
+
 
 fx-script-step-page table{
 	width: 100%;
@@ -192,7 +188,6 @@ fx-script-step-page table{
 }
 
 fx-script-step-page {
-	font-size: .8rem;
 }
 
 
@@ -211,10 +206,112 @@ fx-script-step-page fx-data-table th:nth-of-type(3){
 	width: 4ch;
 }
 
-tr.logic {
+fx-script-step-row.logic {
 	color: blue
 }
 
-tr.comment {
+fx-script-step-row.comment {
 	color: green;
+}
+
+fx-script-step-row.disabled {
+	color: rgb(189, 188, 188);
+
+}
+
+fx-padding {
+	display: contents;
+}
+
+fx-padding #container{
+	display: inline-flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	gap: 0;
+}
+
+
+fx-padding #container div{
+	display: inline-block;
+	height: 10px;
+	width: 1.5rem;
+}
+
+fx-script-step-row {
+	display: contents;
+}
+
+
+
+fx-calculation {
+	display: inline;
+}
+
+fx-calculation[is-open]{
+	display: block;
+	padding: 1rem;
+}
+
+/* hide all internal divs */
+fx-calculation div {
+	display: inline;
+}
+
+fx-calculation #calculation::before{
+	content: "[";
+	display: inline;
+}
+
+fx-calculation #calculation::after{
+	content: "]";
+	display: inline;
+}
+
+
+
+fx-calculation[is-open] #container {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	overflow: auto;
+}
+
+fx-calculation[is-open] #calculation {
+	white-space: pre;
+	display: block;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	padding: 0.5rem;
+	overflow: auto;
+	tab-size: 3;
+}
+
+fx-calculation[is-open] #calculation::before{
+	content: "";
+	display: none;
+}
+
+fx-calculation[is-open] #calculation::after{
+	content: "";
+	display: none;
+}
+
+fx-calculation[is-open] #references{
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	column-gap: 10px;
+	row-gap: 2px;
+}
+
+fx-calculation[is-open] #references span {
+	display: inline-block;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	padding: 0.1rem 0.5rem;
+}
+
+fx-calculation.variable-\$item_json {
+	background-color: rgb(242, 255, 0);
 }
