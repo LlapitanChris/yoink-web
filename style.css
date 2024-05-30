@@ -107,7 +107,6 @@ fx-database-element fx-database-element {
 	justify-content: flex-start;
 	align-items: stretch;
 	gap: 1rem;
-	width: 100%;
 	padding: 1rem;
 	border: 1px solid #ccc;
 	border-radius: 5px;
@@ -194,9 +193,6 @@ fx-script-step-page table{
 	table-layout: fixed;
 }
 
-fx-script-step-page {
-}
-
 
 fx-script-step-page fx-data-table td:first-of-type, 
 fx-script-step-page fx-data-table th:first-of-type{
@@ -253,27 +249,19 @@ fx-script-step-row {
 
 fx-calculation {
 	display: inline;
+	overflow: ellipsis;
 }
 
-fx-calculation[is-open]{
+
+/* fx-calculation[is-open]{
 	display: block;
 	padding: 1rem;
-}
+} */
 
 /* hide all internal divs */
-fx-calculation div {
-	display: inline;
-}
-
-fx-calculation #calculation::before{
-	content: "[";
-	display: inline;
-}
-
-fx-calculation #calculation::after{
-	content: "]";
-	display: inline;
-}
+/* fx-calculation div {
+	display: inline-flex;
+} */
 
 
 
@@ -282,27 +270,25 @@ fx-calculation[is-open] #container {
 	flex-direction: column;
 	gap: 10px;
 	overflow: auto;
+	padding: .5rem;
+}
+
+fx-calculation:not([is-open]) #calculation {
+	display: inline-flex;
+	max-width: 30ch;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 fx-calculation[is-open] #calculation {
-	white-space: pre;
+	white-space: normal;
 	display: block;
-	border: 1px solid #ccc;
-	border-radius: 5px;
-	padding: 0.5rem;
+	border-bottom: 1px solid #ccc;
+	padding: 1rem .5rem 2rem .5rem;
 	overflow: auto;
 	tab-size: 3;
 }
 
-fx-calculation[is-open] #calculation::before{
-	content: "";
-	display: none;
-}
-
-fx-calculation[is-open] #calculation::after{
-	content: "";
-	display: none;
-}
 
 fx-calculation[is-open] #references{
 	display: flex;
@@ -319,6 +305,59 @@ fx-calculation[is-open] #references span {
 	padding: 0.1rem 0.5rem;
 }
 
-fx-calculation.variable-\$item_json {
-	background-color: rgb(242, 255, 0);
+fx-reference-page {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
 }
+
+fx-reference-page fx-data-table table {
+	table-layout: fixed;
+	overflow: auto;
+}
+
+fx-calculation:not([is-open]) {
+	display: inline-flex;
+	overflow: hidden;
+}
+
+fx-calculation:not([is-open]) #references {
+	display: none;
+}
+
+fx-calculation:not([is-open])::before {
+	content: '[';
+}
+
+fx-calculation:not([is-open])::after {
+	content: ']';
+}
+
+
+fx-reference-page fx-data-table td > div {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	gap: .5rem;
+	
+}
+/* hide the scrollbar */
+fx-reference-page fx-data-table td > div::-webkit-scrollbar {
+	display: none;
+}
+
+
+fx-reference-page span.element {   
+	border: 1px solid #ccc;
+	background-color: #ededed;
+	color: black;
+	font-size: .8rem;
+	border-radius: 5px;
+	padding: 0.1rem 0.5rem;
+	max-width: 80vw;
+}
+
+/* fx-reference-page span.element:last-child {
+	position: sticky;
+	right: 0;
+} */

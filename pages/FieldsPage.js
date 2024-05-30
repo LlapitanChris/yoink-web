@@ -1,4 +1,5 @@
 import { LitElement, html } from 'https://cdn.skypack.dev/lit-element';
+import { cache } from 'https://cdn.skypack.dev/lit-html/directives/cache.js';
 import { FxDataPageMixin } from "../mixins/FxDataPageMixin.js";
 import '../components/FxField.js';
 import '../components/FxDataTable.js';
@@ -17,6 +18,7 @@ export default class FieldsPage extends baseClass {
 	static get properties() {
 		return {
 			uuid: { type: String },
+			showReferences: { type: Boolean },
 			display: { type: String, reflect: true },
 			tableId: { type: String }
 		}
@@ -65,6 +67,7 @@ export default class FieldsPage extends baseClass {
 				<tr>
 					<th>Table</th>
 					<th>Field</th>
+					${ this.showReferences ? html`<th>References</th>` : '' }
 					<th>Mod Count</th>
 					<th>Username</th>
 					<th>Account Name</th>
@@ -78,10 +81,16 @@ export default class FieldsPage extends baseClass {
 			const tableName = tableRef.getAttribute('name');
 			const tableId = tableRef.getAttribute('id');
 			const id = field.getAttribute('id');
+			const uuid = field.querySelector('UUID').textContent;
 			return html`
 				<tr>
 					<td @click=${route} href=${`/table?id=${tableId}`}>${tableName}</td>
 					<td @click=${route} href=${`/field?id=${id}`}>${field.getAttribute('name')}</td>
+					${
+						this.showReferences ? html`
+							<td @click=${route} href=${`/reference?uuid=${uuid}&type=FieldReference`}>${super.xpath(`//FieldReference[@UUID='${uuid}']`, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE).snapshotLength}</td>
+						` : ''
+					}
 					<td>${field.querySelector('UUID')?.getAttribute('modifications')}</td>
 					<td>${field.querySelector('UUID')?.getAttribute('userName')}</td>
 					<td>${field.querySelector('UUID')?.getAttribute('accountName')}</td>
@@ -97,7 +106,7 @@ export default class FieldsPage extends baseClass {
 		return html`
 			<fx-page>
 				${this.headerTemplate()}
-				${dataTableTemplate}
+				${cache(dataTableTemplate)}
 			</fx-page>
 		`;
 		

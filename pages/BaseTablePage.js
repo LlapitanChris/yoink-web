@@ -56,6 +56,7 @@ export default class TablePage extends baseClass {
 			return html`
 				<tr>
 					<th>Base Table</th>
+					<th>Field Count</th>
 					<th>Mod Count</th>
 					<th>Username</th>
 					<th>Account Name</th>
@@ -65,10 +66,13 @@ export default class TablePage extends baseClass {
 		}
 
 		const rowTemplate = (baseTable) => { 
-			const id = baseTable.getAttribute('id');
+			const id = baseTable.getAttribute('id'); 
+			const fieldCount = super.xpath(`(//FieldsForTables//BaseTableReference[@id="${id}"]/following-sibling::ObjectList/@membercount)`, XPathResult.NUMBER_TYPE).numberValue;
+
 			return html`
 				<tr>
 					<td @click=${route} href=${`/table?id=${id}`}>${baseTable.getAttribute('name')}</td>
+					<td @click=${route} href=${`/field?tableId=${id}&showReferences=true`}>${fieldCount}</td>
 					<td>${baseTable.querySelector('UUID')?.getAttribute('modifications')}</td>
 					<td>${baseTable.querySelector('UUID')?.getAttribute('userName')}</td>
 					<td>${baseTable.querySelector('UUID')?.getAttribute('accountName')}</td>
