@@ -172,7 +172,6 @@ fx-data-table table {
 }
 
 fx-data-table td {
-	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	padding: 0.1rem 0.5rem;
@@ -247,64 +246,6 @@ fx-script-step-row {
 
 
 
-fx-calculation {
-	display: inline;
-	overflow: ellipsis;
-}
-
-
-/* fx-calculation[is-open]{
-	display: block;
-	padding: 1rem;
-} */
-
-/* hide all internal divs */
-/* fx-calculation div {
-	display: inline-flex;
-} */
-
-
-
-fx-calculation[is-open] #container {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-	overflow: auto;
-	padding: .5rem;
-}
-
-fx-calculation:not([is-open]) #calculation {
-	display: inline-flex;
-	max-width: 30ch;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-fx-calculation[is-open] #calculation {
-	white-space: normal;
-	display: block;
-	border-bottom: 1px solid #ccc;
-	padding: 1rem .5rem 2rem .5rem;
-	overflow: auto;
-	tab-size: 3;
-}
-
-
-fx-calculation[is-open] #references{
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	column-gap: 10px;
-	row-gap: 2px;
-}
-
-fx-calculation[is-open] #references span {
-	display: inline-block;
-	border: 1px solid #ccc;
-	border-radius: 5px;
-	padding: 0.1rem 0.5rem;
-}
-
 fx-reference-page {
 	display: flex;
 	flex-direction: column;
@@ -316,48 +257,5 @@ fx-reference-page fx-data-table table {
 	overflow: auto;
 }
 
-fx-calculation:not([is-open]) {
-	display: inline-flex;
-	overflow: hidden;
-}
-
-fx-calculation:not([is-open]) #references {
-	display: none;
-}
-
-fx-calculation:not([is-open])::before {
-	content: '[';
-}
-
-fx-calculation:not([is-open])::after {
-	content: ']';
-}
 
 
-fx-reference-page fx-data-table td > div {
-	display: flex;
-	align-items: center;
-	flex-direction: row;
-	gap: .5rem;
-	
-}
-/* hide the scrollbar */
-fx-reference-page fx-data-table td > div::-webkit-scrollbar {
-	display: none;
-}
-
-
-fx-reference-page span.element {   
-	border: 1px solid #ccc;
-	background-color: #ededed;
-	color: black;
-	font-size: .8rem;
-	border-radius: 5px;
-	padding: 0.1rem 0.5rem;
-	max-width: 80vw;
-}
-
-/* fx-reference-page span.element:last-child {
-	position: sticky;
-	right: 0;
-} */

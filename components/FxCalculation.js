@@ -8,8 +8,75 @@ export default class FxCalculation extends LitElement {
 			xmlNode: { type: Object },
 		}
 	}
-	createRenderRoot() {
-		return this;
+
+	static get styles() { 
+		return css`
+			:host {
+				--closed-max-width: 50ch;
+				--open-max-width: 100ch;
+				display: inline-flex;
+				cursor: pointer;
+				max-width: var(--closed-max-width);
+
+			}
+
+			#references {
+				display: none;
+			}
+
+			#references span {
+				display: inline-block;
+				margin-right: 5px;
+				border: 1px solid #ccc;
+				border-radius: 5px;
+				padding: 2px 5px;
+				cursor: pointer;
+			}
+
+			:host([is-open]) #references {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 5px;
+			}
+
+			#calculation {
+				display: inline-block;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			:host:before {
+				content: '['
+			}
+
+			:host:after {
+				content: ']'
+			}
+
+			:host([is-open]):before {
+				content: ''
+			}
+
+			:host([is-open]):after {
+				content: ''
+			}
+
+			:host([is-open]) #calculation {
+				display: block;
+				text-wrap: pretty;
+
+			}
+
+			:host([is-open]) {
+				display: flex;
+				flex-direction: column;
+				gap: 10px;
+				width: var(--open-max-width);
+				max-width: var(--open-max-width);
+
+			}
+
+		`
 	}
 
 	set xmlNode(value) {
@@ -109,10 +176,8 @@ export default class FxCalculation extends LitElement {
 		});
 
 		return html`
-			<div id='container'>
 				<div id='calculation'>${calcText}</div>
 				<div id='references'>${templates}</div>
-			</div>
 		`;
 	}
 

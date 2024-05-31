@@ -4,6 +4,7 @@ import { LitElement, html } from 'https://cdn.skypack.dev/lit-element';
 import '../components/FxPage.js';
 import '../components/FxDataTable.js';
 import '../components/FxCalculation.js';
+import '../components/FxNodePill.js';
 
 // import the mixin
 import { FxDataPageMixin } from '../mixins/FxDataPageMixin.js';
@@ -44,7 +45,6 @@ export default class ReferencePage extends baseClass {
 		if (this.uuid && this.type) {
 			headerHTML = html`<h1 slot='title'>References for ${this.uuid}</h1>`;
 			references = super.xpath(`//${this.type}[@UUID="${this.uuid}"]`, XPathResult.ORDERED_NODE_ITERATOR_TYPE);
-			console.log(references);
 		}
 
 		// create a table of the data
@@ -58,7 +58,7 @@ export default class ReferencePage extends baseClass {
 
 		const rowTemplate = (reference) => {
 			const chunksToSkip = ['ObjectList', 'PartsList', 'JoinPredicateList', 'ParameterValues', 'StepsForScripts',
-				'ChunkList', 'Chunk', 'value', 'action', 'Conditions', 'JoinPredicate'
+				'ChunkList', 'Chunk', 'value', 'action', 'Conditions', 'JoinPredicate', 'TabPanel', 'Field'
 			]
 			const exitWhen = ['AddAction', 'FMSaveAsXML'];
 			const templatesArray = [];
@@ -75,20 +75,22 @@ export default class ReferencePage extends baseClass {
 					element = element.parentElement;
 					continue;
 				}
-				if (element.nodeName === element.parentElement.nodeName) {
+				if (element.nodeName == element.parentElement.nodeName) {
+					element = element.parentElement;
+					continue;
+				}
+				// specific to layoutObjects
+				if (
+					element.parentElement.nodeName == 'LayoutObject' &&
+					element.nodeName == element.parentElement.getAttribute('type').replace(' ', '')
+				) {
 					element = element.parentElement;
 					continue;
 				}
 
-
 				// create a template for the node
-				const template = html`
-					${templatesArray.length > 0 ? html`<span> < </span>` : ''}
-					${element.nodeName === 'Calculation' ?
-						html`<span class='element'><fx-calculation .xmlNode=${element}></fx-calculation></span>` :
-						html`<span class='element'>${this.getElementTitle(element)}</span>`
-					}
-				`;
+				const template = html`${templatesArray.length > 0 ? html`<span> < </span>` : ''}
+					<fx-node-pill .node=${element} ?hide-type=${true}></fx-node-pill>`;
 
 				// add the template to the array
 				templatesArray.push(template);
@@ -115,20 +117,6 @@ export default class ReferencePage extends baseClass {
 			</fx-page>
 		`;
 
-	}
-
-	getElementTitle(element) {
-		const nodeName = element.nodeName;
-		const name = element.getAttribute('name');
-		switch (nodeName) {
-			case 'Script':
-				let scriptName = element.querySelector('ScriptReference').getAttribute('name');
-				return `Script: ${scriptName}`;
-			case 'Step':
-				return `Step: ${name}`;
-			default:
-				return nodeName;
-		}
 	}
 
 }
