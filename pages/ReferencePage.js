@@ -1,4 +1,4 @@
-import { LitElement, html } from 'https://cdn.skypack.dev/lit-element';
+import { LitElement, html, css, nothing } from 'https://cdn.skypack.dev/lit-element';
 
 // import sub components
 import '../components/FxPage.js';
@@ -58,11 +58,12 @@ export default class ReferencePage extends baseClass {
 
 		const rowTemplate = (reference) => {
 			const chunksToSkip = ['ObjectList', 'PartsList', 'JoinPredicateList', 'ParameterValues', 'StepsForScripts',
-				'ChunkList', 'Chunk', 'value', 'action', 'Conditions', 'JoinPredicate', 'TabPanel', 'Field'
+				'ChunkList', 'Chunk', 'value', 'action', 'Conditions', 'JoinPredicate', 'TabPanel', 'ScriptTriggers', 'List'
 			]
 			const exitWhen = ['AddAction', 'FMSaveAsXML'];
 			const templatesArray = [];
 			let element = reference;
+			let count = 0;
 
 			while (element) {
 				// exit if name is in exitWhen or name includes
@@ -97,6 +98,10 @@ export default class ReferencePage extends baseClass {
 
 				element = element.parentElement;
 
+			}
+
+			if (templatesArray.length === 1) {
+				return nothing;
 			}
 
 			return html`

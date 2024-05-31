@@ -61,6 +61,7 @@ export default class FxScriptPage extends baseClass {
 		const columnHeaderTemplate = () => {
 			return html`
 				<tr>
+					<th></th>
 					<th style="width:300px">Name</th>
 					<th>Id</th>
 					<th>Folder</th>
@@ -75,8 +76,10 @@ export default class FxScriptPage extends baseClass {
 		const rowTemplate = (item) => {
 
 			const type = item.getAttribute('isFolder')
+			const uuid = item.querySelector('UUID')?.textContent || item.getAttribute('UUID');
 			return html`
 				<tr>
+					<td><button @click=${route} href=${`/reference?uuid=${uuid}&type=ScriptReference`}>R</button></td>
 					<td @click=${route} href=${`/script-step?scriptId=${item.getAttribute('id')}`}>${item.getAttribute('name')}</td>
 					<td>${item.getAttribute('id')}</td>
 					<td>${type == 'True' ? 'Folder' : type}</td>

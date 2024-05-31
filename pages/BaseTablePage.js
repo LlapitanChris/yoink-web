@@ -8,6 +8,7 @@ import '../components/FxBaseTable.js';
 import '../components/FxElementList.js';
 import '../components/FxPage.js';
 import '../components/FxDataTable.js';
+import '../components/FxReferencesButton.js'
 
 // import the mixin
 import { FxDataPageMixin } from '../mixins/FxDataPageMixin.js';
@@ -55,6 +56,7 @@ export default class TablePage extends baseClass {
 		const columnsTemplate = () => {
 			return html`
 				<tr>
+					<th></th>
 					<th>Base Table</th>
 					<th>Field Count</th>
 					<th>Mod Count</th>
@@ -66,11 +68,13 @@ export default class TablePage extends baseClass {
 		}
 
 		const rowTemplate = (baseTable) => { 
-			const id = baseTable.getAttribute('id'); 
+			const id = baseTable.getAttribute('id');
+			const uuid = baseTable.querySelector('UUID').textContent;
 			const fieldCount = super.xpath(`(//FieldsForTables//BaseTableReference[@id="${id}"]/following-sibling::ObjectList/@membercount)`, XPathResult.NUMBER_TYPE).numberValue;
 
 			return html`
 				<tr>
+					<td><fx-references-button .xmlNode=${baseTable} label='R'></fx-references-button></td>
 					<td @click=${route} href=${`/table?id=${id}`}>${baseTable.getAttribute('name')}</td>
 					<td @click=${route} href=${`/field?tableId=${id}&showReferences=true`}>${fieldCount}</td>
 					<td>${baseTable.querySelector('UUID')?.getAttribute('modifications')}</td>

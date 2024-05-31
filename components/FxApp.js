@@ -86,7 +86,7 @@ export default class FxApp extends LitElement {
 
 	// general route function that will be override the click event
 	route = (event) => {
-		console.log('Route function called');
+		console.log('Route function called', event.target.getAttribute('href'), event.target);
 		event.preventDefault();
 		const path = event.target.getAttribute('href');
 		window.history.pushState({}, '', path);

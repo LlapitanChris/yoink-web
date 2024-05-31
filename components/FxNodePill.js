@@ -7,7 +7,7 @@ export default class FxNodePill extends LitElement {
 	static get properties() {
 		return {
 			node: { type: Object }, // xml node
-			type: { type: String, reflect: true }, // local name of the node
+			type: { type: String }, // local name of the node
 			uuid: { type: String, reflect: true }, // uuid of the node
 		}
 	}
@@ -15,6 +15,7 @@ export default class FxNodePill extends LitElement {
 	static get styles() {
 		return css`
 			:host {
+				--pill-script-color: rgb(188, 197, 240);
 				display: inline-block;
 				border: 1px solid #ccc;
 				background-color: #f9f9f9;
@@ -26,6 +27,35 @@ export default class FxNodePill extends LitElement {
 			:host([hide-type]) #type {
 				display: none;
 			}
+
+			:host(.script-pill), 
+			:host(.scriptreference-pill) {
+				background-color: var(--pill-script-color);
+			}
+
+			:host(.layout-pill){
+				background-color: rgb(164, 223, 153);
+			}
+			:host(.layoutobject-pill){
+				background-color: hsl(44, 65.80%, 69.00%);
+			}
+			:host(.relationship-pill){
+				background-color: rgb(222, 169, 252);
+			}
+			:host(.fieldreference-pill){
+				background-color: rgb(255, 182, 182);
+			}
+			:host(.privilegeset-pill){
+				background-color: rgb(187, 187, 187);
+			}
+			:host(.tableoccurrence-pill){
+				background-color: rgb(255, 168, 242);
+			}
+			:host(.basetablereference-pill){
+				background-color: rgb(255, 201, 168);
+			}
+
+
 			`;
 	}
 
@@ -52,6 +82,7 @@ export default class FxNodePill extends LitElement {
 		}
 
 		this.title = this.type
+		this.classList.add(`${this.type.toLowerCase()}-pill`);
 
 		if(!this[this.type + 'Template']) {
 			return this.defaultTemplate();
@@ -75,11 +106,23 @@ export default class FxNodePill extends LitElement {
 	}
 
 	FieldReferenceTemplate() {
-		const tableOccurrenceName = this.node.querySelector('TableOccurrenceReference').getAttribute('name');
+		const tableOccurrenceName = this.node.querySelector('TableOccurrenceReference')?.getAttribute('name');
 		const fieldName = this.node.getAttribute('name');
 		return html`
 			<span id='type'>Field:</span>
-			<span id='name'>${tableOccurrenceName}::${fieldName}</span>
+			<span id='name'>${tableOccurrenceName ? `${tableOccurrenceName}::` : nothing}${fieldName}</span>
+		`;
+	}
+
+	FieldTemplate() {	
+		let tableOccurrenceName;
+		if (this.node.closest('FieldCatalog')) {
+			tableOccurrenceName = this.node.closest('FieldCatalog').querySelector('TableOccurrenceReference').getAttribute('name');
+		}
+
+		return html`
+			<span id='type'>Field:</span>
+			<span id='name'>${tableOccurrenceName ? `${tableOccurrenceName}::` : nothing}${this.type}</span>
 		`;
 	}
 
@@ -137,6 +180,25 @@ export default class FxNodePill extends LitElement {
 
 	}
 
+	StepTemplate() {
+		const stepName = this.node.getAttribute('name');
+		const index = this.node.getAttribute('index');
+
+		if (stepName == 'Perform Script') {
+			const scriptName = this.node.querySelector('ScriptReference').getAttribute('name') ||
+				this.node.querySelector('Parameter List[name="By name"] Calculation Text').textContent;
+			return html`
+				<span id='type'>${this.type}:</span>
+				<span id='name'>#${index}: ${stepName} "${scriptName}"</span>
+			`;
+		}
+
+		return html`
+			<span id='type'>${this.type}:</span>
+			<span id='name'>#${index}: ${stepName}</span>
+		`;
+	
+	}
 }
 
 customElements.define('fx-node-pill', FxNodePill);

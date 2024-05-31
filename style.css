@@ -258,4 +258,10 @@ fx-reference-page fx-data-table table {
 }
 
 
+fx-reference-page fx-data-table tr fx-node-pill:last-child {
+	position: sticky;
+	right: 0;
+}
+
+
 
