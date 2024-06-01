@@ -15,13 +15,14 @@ export default class FxNodePill extends LitElement {
 	static get styles() {
 		return css`
 			:host {
-				--pill-script-color: rgb(188, 197, 240);
 				display: inline-block;
 				border: 1px solid #ccc;
 				background-color: #f9f9f9;
 				border-radius: 5px;
 				padding: 5px;
 				font-size: 0.8em;
+				overflow: hidden;
+				text-overflow: ellipsis;
 			}
 			
 			:host([hide-type]) #type {
@@ -30,29 +31,39 @@ export default class FxNodePill extends LitElement {
 
 			:host(.script-pill), 
 			:host(.scriptreference-pill) {
-				background-color: var(--pill-script-color);
+				background-color: rgb(188, 197, 240);
+				border: 1px solid hsl(230, 68.20%, 69.20%);
 			}
 
 			:host(.layout-pill){
 				background-color: rgb(164, 223, 153);
+				border: 1px solid hsl(120, 65.80%, 36.70%);
 			}
 			:host(.layoutobject-pill){
 				background-color: hsl(44, 65.80%, 69.00%);
+				border: 1px solid hsl(44, 75.40%, 40%);
 			}
 			:host(.relationship-pill){
 				background-color: rgb(222, 169, 252);
+				border: 1px solid hsl( 280, 68.20%, 69.20%);
 			}
-			:host(.fieldreference-pill){
+			:host(.fieldreference-pill),
+			:host(.field-pill){
 				background-color: rgb(255, 182, 182);
+				border: 1px solid hsl( 0, 68.20%, 69.20%);
 			}
 			:host(.privilegeset-pill){
 				background-color: rgb(187, 187, 187);
+				border: 1px solid hsl( 0, 0%, 50%);
 			}
-			:host(.tableoccurrence-pill){
+			:host(.tableoccurrence-pill),
+			:host(.tableoccurrencereference-pill){
 				background-color: rgb(255, 168, 242);
+				border: 1px solid hsl( 320, 68.20%, 69.20%);
 			}
 			:host(.basetablereference-pill){
 				background-color: rgb(255, 201, 168);
+				border: 1px solid hsl( 20, 68.20%, 69.20%);
 			}
 
 
@@ -111,18 +122,6 @@ export default class FxNodePill extends LitElement {
 		return html`
 			<span id='type'>Field:</span>
 			<span id='name'>${tableOccurrenceName ? `${tableOccurrenceName}::` : nothing}${fieldName}</span>
-		`;
-	}
-
-	FieldTemplate() {	
-		let tableOccurrenceName;
-		if (this.node.closest('FieldCatalog')) {
-			tableOccurrenceName = this.node.closest('FieldCatalog').querySelector('TableOccurrenceReference').getAttribute('name');
-		}
-
-		return html`
-			<span id='type'>Field:</span>
-			<span id='name'>${tableOccurrenceName ? `${tableOccurrenceName}::` : nothing}${this.type}</span>
 		`;
 	}
 

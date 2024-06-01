@@ -10,7 +10,8 @@ export default class FxDataTable extends LitElement {
 		return {
 			data: { type: Array },
 			rowTemplate: { type: Function },
-			columnsTemplate: { type: Function }
+			columnsTemplate: { type: Function },
+			columnGroupTemplate: { type: Function },
 		}
 	}
 	static get styles() {
@@ -32,6 +33,7 @@ export default class FxDataTable extends LitElement {
 		const options = { indentLevel: 0 };
 		return html`
 			<table part='table'>
+				${ this.columnGroupTemplate ? this.columnGroupTemplate() :''}
 				<thead>
 						${this.columnsTemplate()}
 				</thead>

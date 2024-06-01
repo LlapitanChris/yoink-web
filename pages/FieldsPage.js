@@ -3,6 +3,7 @@ import { cache } from 'https://cdn.skypack.dev/lit-html/directives/cache.js';
 import { FxDataPageMixin } from "../mixins/FxDataPageMixin.js";
 import '../components/FxField.js';
 import '../components/FxDataTable.js';
+import '../components/FxReferencesButton.js';
 
 const baseClass = FxDataPageMixin(LitElement);
 
@@ -65,6 +66,7 @@ export default class FieldsPage extends baseClass {
 		const columnHeaderTemplate = () => { 
 			return html`
 				<tr>
+					<th></th>
 					<th>Table</th>
 					<th>Field</th>
 					${ this.showReferences ? html`<th>References</th>` : '' }
@@ -84,6 +86,7 @@ export default class FieldsPage extends baseClass {
 			const uuid = field.querySelector('UUID').textContent;
 			return html`
 				<tr>
+					<td><fx-references-button .xmlNode=${field} label='R'></fx-references-button></td>
 					<td @click=${route} href=${`/table?id=${tableId}`}>${tableName}</td>
 					<td @click=${route} href=${`/field?id=${id}`}>${field.getAttribute('name')}</td>
 					${

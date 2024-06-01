@@ -52,6 +52,21 @@ export default class TablePage extends baseClass {
 			baseTables = super.xpath('//BaseTable', XPathResult.ORDERED_NODE_ITERATOR_TYPE);
 		}
 
+		// create colgroup template
+		const colgroupTemplate = () => {
+			return html`
+			<colgroup>
+				<col style='width: 50px'></col>
+				<col style='width: 200'></col>
+				<col style='width: 100px'></col>
+				<col style='width: 100px'></col>
+				<col style='width: 100px'></col>
+				<col style='width: 100px'></col>
+				<col style='width: 200px'></col>
+			</colgroup>
+		`;
+		}
+
 		// create a table of the data
 		const columnsTemplate = () => {
 			return html`
@@ -86,7 +101,11 @@ export default class TablePage extends baseClass {
 		}
 
 		const tableData = html`
-			<fx-data-table .data=${baseTables} .columnsTemplate=${columnsTemplate} .rowTemplate=${rowTemplate}></fx-data-table>
+			<fx-data-table
+			.data=${baseTables} 
+			.columnsTemplate=${columnsTemplate} 
+			.rowTemplate=${rowTemplate}
+			.columnGroupTemplate=${colgroupTemplate}></fx-data-table>
 		`;
 
 		const detailViewTemplate = () => { 

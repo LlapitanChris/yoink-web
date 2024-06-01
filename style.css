@@ -161,36 +161,24 @@ fx-database-element fx-database-element {
 	
 }
 
-fx-data-table {
-	overflow: auto;
-}
-
 fx-data-table table {
 	width: 100%;
+	margin: 0;
+	padding: 0;
 	border-collapse: collapse;
-	table-layout: auto;
+	table-layout: fixed;
+
 }
 
-fx-data-table td {
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	padding: 0.1rem 0.5rem;
-}
-
+fx-data-table td, 
 fx-data-table th {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+	padding: 0.1rem 0.5rem;
 	text-align: left;
-	padding: 0 0.5rem;
 }
 
-
-
-fx-script-step-page table{
-	width: 100%;
-	table-layout: fixed;
-}
 
 
 fx-script-step-page fx-data-table td:first-of-type, 
@@ -263,5 +251,14 @@ fx-reference-page fx-data-table tr fx-node-pill:last-child {
 	right: 0;
 }
 
+fx-reference-page fx-data-table tr div {
+	display: inline-flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 0.25rem;
+}
 
 
+fx-calculation {
+	z-index: 1000;
+}

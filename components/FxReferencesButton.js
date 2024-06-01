@@ -13,10 +13,25 @@ export class FxReferencesButton extends LitElement {
 		}
 	}
 
+	static get styles() {
+		return css`
+			button {
+				border-radius: 5px;
+				padding: 0;
+				margin: 0;
+				cursor: pointer;
+				font-size: .8rem;
+			}
+		`
+	
+	}
+
 	constructor() {
 		super();
 		this.xmlNode;
 	}
+
+
 
 	render() {
 		const referenceName = this.xmlNode.nodeName + 'Reference';

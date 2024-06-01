@@ -20,7 +20,7 @@ export default class FxCalculation extends LitElement {
 
 			}
 
-			#references {
+			#references, h2 {
 				display: none;
 			}
 
@@ -37,6 +37,13 @@ export default class FxCalculation extends LitElement {
 				display: flex;
 				flex-wrap: wrap;
 				gap: 5px;
+			}
+
+			:host([is-open]) h2 {
+				display: block;
+				margin: 0;
+				padding: 0;
+				font-size: 1em;
 			}
 
 			#calculation {
@@ -73,7 +80,8 @@ export default class FxCalculation extends LitElement {
 				gap: 10px;
 				width: var(--open-max-width);
 				max-width: var(--open-max-width);
-
+				justify-items: space-between;
+				z-index: 1000;
 			}
 
 		`
@@ -176,7 +184,9 @@ export default class FxCalculation extends LitElement {
 		});
 
 		return html`
+				<h2>Calculation</h2>
 				<div id='calculation'>${calcText}</div>
+				<h2>Items Referenced</h2>
 				<div id='references'>${templates}</div>
 		`;
 	}

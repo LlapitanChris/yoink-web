@@ -1,6 +1,7 @@
 import { LitElement, html } from 'https://cdn.skypack.dev/lit-element';
 import { FxDataPageMixin } from "../mixins/FxDataPageMixin.js";
 import '../components/FxDataTable.js';
+import '../components/FxReferencesButton.js';
 
 const baseClass = FxDataPageMixin(LitElement);
 
@@ -63,6 +64,7 @@ export default class TableOccurrencePage extends baseClass {
 		const columnHeaderTemplate = () => {
 			return html`
 				<tr>
+					<th></th>
 					<th>Name</th>
 					<th>Color</th>
 					<th>Top</th>
@@ -86,6 +88,7 @@ export default class TableOccurrencePage extends baseClass {
 
 			return html`
 				<tr>
+					<td><fx-references-button .xmlNode=${item} label='R'></fx-references-button></td>
 					<td @click=${route} href=${`/table-occurrence?id=${item.getAttribute('id')}`}>${item.getAttribute('name')}</td>
 					<td>
 						${item.querySelector('Color').getAttribute('red')},

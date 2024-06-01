@@ -58,7 +58,7 @@ export default class ReferencePage extends baseClass {
 
 		const rowTemplate = (reference) => {
 			const chunksToSkip = ['ObjectList', 'PartsList', 'JoinPredicateList', 'ParameterValues', 'StepsForScripts',
-				'ChunkList', 'Chunk', 'value', 'action', 'Conditions', 'JoinPredicate', 'TabPanel', 'ScriptTriggers', 'List'
+				'ChunkList', 'Chunk', 'value', 'action', 'Conditions', 'JoinPredicate', 'TabPanel', 'ScriptTriggers', 'List', 
 			]
 			const exitWhen = ['AddAction', 'FMSaveAsXML'];
 			const templatesArray = [];
