@@ -26,6 +26,8 @@ export default class TableOccurrencePage extends baseClass {
 	get xpathString() {
 		if (this.id) {
 			return `//AddAction//TableOccurrenceCatalog/TableOccurrence[@id='${this.id}']`;
+		} else if (this.baseTableId) {
+			return `//AddAction//TableOccurrenceCatalog//BaseTableSourceReference/BaseTableReference[@id='${this.baseTableId}']/ancestor::TableOccurrence`;
 		} else {
 			return `//AddAction//TableOccurrenceCatalog/TableOccurrence`;
 		}
@@ -44,7 +46,7 @@ export default class TableOccurrencePage extends baseClass {
 
 	render() {
 		// get parameters from url
-		super.setPropsFromUrl();
+		super.setPropsFromUrl()
 
 
 
@@ -67,16 +69,27 @@ export default class TableOccurrencePage extends baseClass {
 					<th></th>
 					<th>Name</th>
 					<th>Color</th>
-					<th>Top</th>
-					<th>Left</th>
-					<th>Width</th>
-					<th>Height</th>
-					<th>Mod Count</th>
-					<th>Username</th>
-					<th>Account Name</th>
+					<th>T/L</th>
+					<th>W/H</th>
+					<th>Mod</th>
+					<th>Account</th>
 					<th>Timestamp</th>
 				</tr>
 			`;
+		}
+
+		const columnGroupTemplate = () => {
+			return html`
+				<colgroup>
+					<col style='width: 50px'></col>
+					<col style='width: 100%'></col>
+					<col style='width: 50px'></col>
+					<col style='width: 15ch'></col>
+					<col style='width: 15ch'></col>
+					<col style='width: 5ch'></col>
+					<col style='width: 200px'></col>
+					<col style='width: 200px'></col>
+					`
 		}
 
 		const rowTemplate = (item) => {
@@ -84,32 +97,36 @@ export default class TableOccurrencePage extends baseClass {
 			const coordRect = item.querySelector('CoordRect');
 			const width = coordRect.getAttribute('right') - coordRect.getAttribute('left');
 			const height = coordRect.getAttribute('bottom') - coordRect.getAttribute('top');
+			const r = item.querySelector('Color').getAttribute('red');
+			const g = item.querySelector('Color').getAttribute('green');
+			const b = item.querySelector('Color').getAttribute('blue');
 
+			const userName = item.querySelector('UUID')?.getAttribute('userName');
+			const accountName = item.querySelector('UUID')?.getAttribute('accountName');
 
 			return html`
 				<tr>
-					<td><fx-references-button .xmlNode=${item} label='R'></fx-references-button></td>
+					<td><fx-references-button .xmlNode=${item} label='R' class='very-small'></fx-references-button></td>
 					<td @click=${route} href=${`/table-occurrence?id=${item.getAttribute('id')}`}>${item.getAttribute('name')}</td>
 					<td>
-						${item.querySelector('Color').getAttribute('red')},
-						${item.querySelector('Color').getAttribute('green')},
-						${item.querySelector('Color').getAttribute('blue')}
-						${item.querySelector('Color').getAttribute('alpha')}
+						<div class='color' style='width: 10px; height: 10px; background-color: rgb(${r}, ${g}, ${b})'></div>
 					</td>
-					<td>${coordRect.getAttribute('top')}</td>
-					<td>${coordRect.getAttribute('left')}</td>
-					<td>${width}</td>
-					<td>${height}</td>
+					<td>[${coordRect.getAttribute('top')}, ${coordRect.getAttribute('left')}]</td>
+					<td>${width} x ${height}</td>
 					<td>${item.querySelector('UUID')?.getAttribute('modifications')}</td>
-					<td>${item.querySelector('UUID')?.getAttribute('userName')}</td>
-					<td>${item.querySelector('UUID')?.getAttribute('accountName')}</td>
+					<td title=${userName}>${accountName}</td>
 					<td>${new Date(item.querySelector('UUID')?.getAttribute('timestamp')).toLocaleString()}</td>
 				</tr>
 			`;
 		}
 
 		const dataTableTemplate = html`
-			<fx-data-table .data=${super.xpath(this.xpathString, XPathResult.ORDERED_NODE_ITERATOR_TYPE)} .columnsTemplate=${columnHeaderTemplate} .rowTemplate=${rowTemplate}></fx-data-table>
+			<fx-data-table
+				.data=${super.xpath(this.xpathString, XPathResult.ORDERED_NODE_ITERATOR_TYPE)} 
+				.columnGroupTemplate=${columnGroupTemplate}
+				.columnsTemplate=${columnHeaderTemplate} 
+				.rowTemplate=${rowTemplate}
+			></fx-data-table>
 		`;
 
 		return html`

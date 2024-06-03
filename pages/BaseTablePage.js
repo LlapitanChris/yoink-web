@@ -74,6 +74,7 @@ export default class TablePage extends baseClass {
 					<th></th>
 					<th>Base Table</th>
 					<th>Field Count</th>
+					<th>Occ</th>
 					<th>Mod Count</th>
 					<th>Username</th>
 					<th>Account Name</th>
@@ -86,12 +87,14 @@ export default class TablePage extends baseClass {
 			const id = baseTable.getAttribute('id');
 			const uuid = baseTable.querySelector('UUID').textContent;
 			const fieldCount = super.xpath(`(//FieldsForTables//BaseTableReference[@id="${id}"]/following-sibling::ObjectList/@membercount)`, XPathResult.NUMBER_TYPE).numberValue;
+			const occurrences = super.xpath(`count(//TableOccurrenceCatalog//BaseTableReference[@id="${id}"]/ancestor::TableOccurrence)`, XPathResult.NUMBER_TYPE).numberValue;
 
 			return html`
 				<tr>
-					<td><fx-references-button .xmlNode=${baseTable} label='R'></fx-references-button></td>
+					<td><fx-references-button class='very-small' .xmlNode=${baseTable} label='R'></fx-references-button></td>
 					<td @click=${route} href=${`/table?id=${id}`}>${baseTable.getAttribute('name')}</td>
 					<td @click=${route} href=${`/field?tableId=${id}&showReferences=true`}>${fieldCount}</td>
+					<td @click=${route} href=${`table-occurrence?baseTableId=${id}`}>${occurrences}</td>
 					<td>${baseTable.querySelector('UUID')?.getAttribute('modifications')}</td>
 					<td>${baseTable.querySelector('UUID')?.getAttribute('userName')}</td>
 					<td>${baseTable.querySelector('UUID')?.getAttribute('accountName')}</td>

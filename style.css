@@ -172,13 +172,29 @@ fx-data-table table {
 
 fx-data-table td, 
 fx-data-table th {
+	margin: 0;
+		padding: 0;
+		padding-bottom: .125rem;
+		padding-top: .125rem;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	padding: 0.1rem 0.5rem;
 	text-align: left;
+	vertical-align: middle;
+		border-bottom: 1px solid #e0dfdf;
 }
 
+td:has(>div.color),
+td:has(>fx-references-button) {
+	padding: 0;
+}
+
+div.color {
+	width: 1rem;
+	height: 1rem;
+	border-radius: 50%;
+
+}
 
 
 fx-script-step-page fx-data-table td:first-of-type, 
@@ -240,6 +256,10 @@ fx-reference-page {
 	gap: 1rem;
 }
 
+fx-reference-page fx-data-table td,
+fx-reference-page fx-data-table th {
+	border: none;
+}
 fx-reference-page fx-data-table table {
 	table-layout: fixed;
 	overflow: auto;
@@ -253,7 +273,7 @@ fx-reference-page fx-data-table tr fx-node-pill:last-child {
 
 fx-reference-page fx-data-table tr div {
 	display: inline-flex;
-	flex-direction: row;
+	flex-direction: row-reverse;
 	align-items: center;
 	gap: 0.25rem;
 }

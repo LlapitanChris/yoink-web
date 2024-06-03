@@ -90,7 +90,7 @@ export default class ReferencePage extends baseClass {
 				}
 
 				// create a template for the node
-				const template = html`${templatesArray.length > 0 ? html`<span> < </span>` : ''}
+				const template = html`${templatesArray.length > 0 ? html`<span> > </span>` : ''}
 					<fx-node-pill .node=${element} ?hide-type=${true}></fx-node-pill>`;
 
 				// add the template to the array
