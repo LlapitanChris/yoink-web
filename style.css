@@ -266,11 +266,6 @@ fx-reference-page fx-data-table table {
 }
 
 
-fx-reference-page fx-data-table tr fx-node-pill:last-child {
-	position: sticky;
-	right: 0;
-}
-
 fx-reference-page fx-data-table tr div {
 	display: inline-flex;
 	flex-direction: row-reverse;
@@ -278,7 +273,7 @@ fx-reference-page fx-data-table tr div {
 	gap: 0.25rem;
 }
 
-
-fx-calculation {
-	z-index: 1000;
+fx-reference-page tr.group-header-row {
+	background-color: #f1efef;
+	height: 2rem;
 }

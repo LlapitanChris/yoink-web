@@ -12,6 +12,7 @@ export default class FxDataTable extends LitElement {
 			rowTemplate: { type: Function },
 			columnsTemplate: { type: Function },
 			columnGroupTemplate: { type: Function },
+			groupData: { type: Array }
 		}
 	}
 	static get styles() {
@@ -31,15 +32,26 @@ export default class FxDataTable extends LitElement {
 
 	render() {
 		const options = { indentLevel: 0 };
+		let rows;
+		if (this.groupData) {
+			// if we have group data, render the group data,
+			// each should have it's own tBody element
+			rows = this.groupData.map(group => group.templateFunction(group.data, options));
+		} else {
+			// if we don't have group data, render the rows INSIDE a tbody
+			rows = html`
+			<tbody>
+				${this.data.map((row) => this.rowTemplate(row, options))}
+			</tbody>
+			`;
+		}
 		return html`
-			<table part='table'>
+			<table>
 				${ this.columnGroupTemplate ? this.columnGroupTemplate() :''}
 				<thead>
 						${this.columnsTemplate()}
 				</thead>
-				<tbody>
-					${this.data.map((row) => this.rowTemplate(row, options))}
-				</tbody>
+				${rows}
 			</table>
 		`;
 
@@ -68,8 +80,49 @@ export default class FxDataTable extends LitElement {
 		this._data = data;
 	}
 
+
 	get data() {
 		return this._data;
+	}
+
+
+	set groupData(value) {
+
+		// ensure that the data is an array
+		if (!Array.isArray(value) ||
+			!value.every(item => item.constructor.name === 'Object') ||
+			!value.length > 0) {
+			console.error('Data must be an array of group data objects', value, item);
+			return;
+		}
+
+		// ensure each object is valid
+		if (!value.every(item => item.hasOwnProperty('data') && item.hasOwnProperty('templateFunction'))) {
+			console.error('Data must be an array of group data objects. Each object must have a data property and a templateFunction property.', value, item);
+			return;
+		}
+
+		this._groupData = value;
+
+		for (const group of this._groupData) {
+			// convert the data to an array if it's an xpathresult
+			if (group.data.constructor.name === 'XPathResult') {
+				let item = group.data.iterateNext();
+				const data = [];
+				while (item) {
+					data.push(item);
+					item = group.data.iterateNext();
+				}
+				group.data = data;
+			}
+		}
+
+
+
+	}
+
+	get groupData() {
+		return this._groupData;
 	}
 
 }
