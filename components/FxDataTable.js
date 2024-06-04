@@ -92,7 +92,7 @@ export default class FxDataTable extends LitElement {
 		if (!Array.isArray(value) ||
 			!value.every(item => item.constructor.name === 'Object') ||
 			!value.length > 0) {
-			console.error('Data must be an array of group data objects', value, item);
+			console.trace('Data must be an array of group data objects', value);
 			return;
 		}
 

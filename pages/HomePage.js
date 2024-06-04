@@ -21,6 +21,7 @@ export default class HomePage extends baseClass {
 			<a href="/table-occurrence" @click=${route}>Table Occurrences</a>
 			<a href="/script" @click=${route}>Script</a>
 			<a href="/script-step" @click=${route}>Script Steps</a>
+			<a href="/layout" @click=${route}>Layouts</a>
 
 			<a href="/field" @click=${route}>Fields</a>
 			<a href="/file-access" @click=${route}>File Accesses</a>

@@ -45,7 +45,7 @@ export class FxReferencesButton extends LitElement {
 
 	render() {
 		const referenceName = this.xmlNode.nodeName + 'Reference';
-		const uuid = this.xmlNode.getAttribute('UUID') || this.xmlNode.querySelector('UUID')?.textContent;
+		const uuid = this.xmlNode.getAttribute('UUID') || this.xmlNode.querySelector(':scope > UUID')?.textContent;
 		if (!uuid) {
 			console.error('No UUID found for reference');
 			return html`<slot></slot>`;

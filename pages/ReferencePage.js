@@ -61,6 +61,8 @@ export default class ReferencePage extends baseClass {
 			while (referenceNodes.iterateNext()) {
 				references.push(referenceNodes.iterateNext());
 			}	
+
+			console.assert(references.length > 0, 'No references found')
 		}
 
 		// create a table of the data
@@ -134,7 +136,6 @@ export default class ReferencePage extends baseClass {
 					continue;
 				}
 				const lastElement = ancestors[ancestors.length - 1];
-				console.log(ancestors, lastElement)
 				const lastElementName = lastElement.nodeName;
 				if (!dictionary.has(lastElementName)) {
 					dictionary.set(lastElementName, []);

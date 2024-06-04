@@ -11,6 +11,7 @@ import '../pages/TableOccurrencePage.js';
 import '../pages/ScriptPage.js';
 import '../pages/ScriptStepPage.js';
 import '../pages/ReferencePage.js';
+import '../pages/LayoutPage.js';
 
 
 
@@ -30,7 +31,8 @@ export default class FxApp extends LitElement {
 			'/table-occurrence': 'fx-table-occurrence-page',
 			'/script': 'fx-script-page',
 			'/script-step': 'fx-script-step-page',
-			'/reference': 'fx-reference-page'
+			'/reference': 'fx-reference-page',
+			'/layout': 'layout-page'
 		}
 	}
 
