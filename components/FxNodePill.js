@@ -105,7 +105,7 @@ export default class FxNodePill extends LitElement {
 	defaultTemplate() {
 		const name = this.node.getAttribute('name') || this.type;
 		return html`
-			<span id='type'>${this.type}</span>
+			<span id='type'>${this.type}: </span>
 			<span id='name'>${name}</span>
 			`;
 	}
@@ -126,7 +126,9 @@ export default class FxNodePill extends LitElement {
 	}
 
 	ScriptTemplate() {
-		const scriptName = this.node.querySelector('ScriptReference').getAttribute('name');
+		const scriptName = this.node.querySelector('ScriptReference')?.getAttribute('name') ||
+			this.node.getAttribute('name')
+
 		return html`
 			<span id='type'>${this.type}:</span>
 			<span id='name'>${scriptName}</span>

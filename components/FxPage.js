@@ -33,8 +33,6 @@ export default class FxPage extends LitElement {
 				display: flex;
 				justify-content: stretch;
 				align-items: center;
-				height: 2rem;
-				background-color: white;
 				position: sticky;
 				top: 0;
 				background-color:	var(--background-color);

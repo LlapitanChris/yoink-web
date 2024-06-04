@@ -54,7 +54,13 @@ export default class ReferencePage extends baseClass {
 
 		// get the XML nodes
 		if (this.uuid && this.type) {
-			headerHTML = html`<h1 slot='title'>References for ${this.uuid}</h1>`;
+			const node = super.xpath(`//UUID[text()="${this.uuid}"]/..`, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue;
+			console.log(node);
+			if (node) { 
+				headerHTML = html`<fx-node-pill .node=${node} ?hide-type=${false} slot='title'></fx-node-pill>`;
+			} else {
+				headerHTML = html`<h1 slot='title'>References for ${this.uuid}</h1>`;
+			}
 			const referenceNodes = super.xpath(`//${this.type}[@UUID="${this.uuid}"]`, XPathResult.ORDERED_NODE_ITERATOR_TYPE);
 
 			// translate into array
@@ -62,7 +68,16 @@ export default class ReferencePage extends baseClass {
 				references.push(referenceNodes.iterateNext());
 			}	
 
-			console.assert(references.length > 0, 'No references found')
+		}
+
+		// if there are no references, return a basic page
+		if (references.length === 0) { 
+			return html`
+				<fx-page>
+					${headerHTML}
+					<p>No references found</p>
+				</fx-page>
+			`;
 		}
 
 		// create a table of the data
