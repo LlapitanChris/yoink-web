@@ -62,15 +62,27 @@ export default class FxScriptPage extends baseClass {
 			return html`
 				<tr>
 					<th></th>
-					<th style="width:300px">Name</th>
+					<th>Name</th>
 					<th>Id</th>
 					<th>Folder</th>
 					<th>Modifications</th>
-					<th>User Name</th>
 					<th>Account Name</th>
 					<th>Timestamp</th>
 				</tr>
 			`;
+		}
+
+		const columnGroupTemplate = () => { 
+			return html`
+				<colgroup>
+					<col style='width: 50px'></col>
+					<col style='width: 300'></col>
+					<col style='width: 6ch'></col>
+					<col style='width: 8ch'></col>
+					<col style='width: 6ch'></col>
+					<col style='width: 200px'></col>
+					<col style='width: 200px'></col>
+				</colgroup>`;
 		}
 
 		const rowTemplate = (item) => {
@@ -84,7 +96,6 @@ export default class FxScriptPage extends baseClass {
 					<td>${item.getAttribute('id')}</td>
 					<td>${type == 'True' ? 'Folder' : type}</td>
 					<td>${item.querySelector('UUID')?.getAttribute('modifications')}</td>
-					<td>${item.querySelector('UUID')?.getAttribute('userName')}</td>
 					<td>${item.querySelector('UUID')?.getAttribute('accountName')}</td>
 					<td>${new Date(item.querySelector('UUID')?.getAttribute('timestamp')).toLocaleString()}</td>
 				</tr>
@@ -92,7 +103,12 @@ export default class FxScriptPage extends baseClass {
 		}
 
 		const dataTableTemplate = html`
-			<fx-data-table .data=${super.xpath(this.xpathString, XPathResult.ORDERED_NODE_ITERATOR_TYPE)} .columnsTemplate=${columnHeaderTemplate} .rowTemplate=${rowTemplate}></fx-data-table>
+			<fx-data-table
+			.data=${super.xpath(this.xpathString, XPathResult.ORDERED_NODE_ITERATOR_TYPE)} 
+			.columnsTemplate=${columnHeaderTemplate} 
+			.rowTemplate=${rowTemplate}
+			.columnGroupTemplate=${columnGroupTemplate}>
+			</fx-data-table>
 		`;
 
 		return html`

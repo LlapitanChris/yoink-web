@@ -63,9 +63,11 @@ export default class ReferencePage extends baseClass {
 			}
 			const referenceNodes = super.xpath(`//${this.type}[@UUID="${this.uuid}"]`, XPathResult.ORDERED_NODE_ITERATOR_TYPE);
 
+
 			// translate into array
-			while (referenceNodes.iterateNext()) {
-				references.push(referenceNodes.iterateNext());
+			let thisNode;
+			while (thisNode = referenceNodes.iterateNext()) {
+				references.push(thisNode);
 			}	
 
 		}
