@@ -30,27 +30,43 @@ export default class CatalogPage extends FxDataPageMixin(LitElement) {
 			return html`
 				<tr>
 					<th>Catalog</th>
-					<th>Member Count</th>
-					<th>Mod Count</th>
-					<th>Username</th>
-					<th>Account Name</th>
+					<th>Items</th>
+					<th>Mod</th>
+					<th>Account</th>
 					<th>Timestamp</th>
 				</tr>
 			`;
 		}
 
+		const columnGroupTemplate = () => { 
+			return html`
+				<colgroup>
+					<col></col>
+					<col style='width: 6ch'></col>
+					<col style='width: 6ch'></col>
+					<col style='width: 200px'></col>
+					<col style='width: 200px'></col>
+				</colgroup>
+				`;
+		}
+
 		// create the table row template
 		const rowTemplate = (catalog) => {
+
+			const name = catalog.nodeName;
+			const nameKebabCase = name.replace(/([A-Z])/g, (g) => `-${g[0].toLowerCase()}`).slice(1);
+			// remove the 'Catalog' from the name
+			const nameClean = nameKebabCase.replace('-catalog', '');
+
 			return html`
 				<tr>
-					<td>${catalog.nodeName}</td>
+					<td><a @click=${route} href=${`/${nameClean}`}>${catalog.nodeName}</a></td>
 					<td>${
 						catalog.nodeName == 'FileAccessCatalog' ?
 						catalog.querySelector('ObjectList').getAttribute('membercount') :
 						catalog.getAttribute('membercount')
 					}</td>
 					<td>${catalog.querySelector('UUID')?.getAttribute('modifications')}</td>
-					<td>${catalog.querySelector('UUID')?.getAttribute('userName')}</td>
 					<td>${catalog.querySelector('UUID')?.getAttribute('accountName')}</td>
 					<td>${catalog.querySelector('UUID')?.getAttribute('timestamp')}</td>
 				</tr>
@@ -59,7 +75,12 @@ export default class CatalogPage extends FxDataPageMixin(LitElement) {
 
 		// create the table
 		const dataTableTemplate = html`
-			<fx-data-table .data=${catalogs} .columnsTemplate=${columnsTemplate} .rowTemplate=${rowTemplate}></fx-data-table>
+			<fx-data-table
+			.data=${catalogs} 
+			.columnsTemplate=${columnsTemplate} 
+			.rowTemplate=${rowTemplate}
+			.columnGroupTemplate=${columnGroupTemplate}>
+			</fx-data-table>
 		`;
 
 		// return the page

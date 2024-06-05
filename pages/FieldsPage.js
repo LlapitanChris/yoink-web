@@ -87,7 +87,7 @@ export default class FieldsPage extends baseClass {
 			return html`
 				<tr>
 					<td><fx-references-button .xmlNode=${field} label='R'></fx-references-button></td>
-					<td @click=${route} href=${`/table?id=${tableId}`}>${tableName}</td>
+					<td @click=${route} href=${`/base-table?id=${tableId}`}>${tableName}</td>
 					<td @click=${route} href=${`/field?id=${id}`}>${field.getAttribute('name')}</td>
 					${
 						this.showReferences ? html`

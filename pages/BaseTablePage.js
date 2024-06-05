@@ -8,7 +8,8 @@ import '../components/FxBaseTable.js';
 import '../components/FxElementList.js';
 import '../components/FxPage.js';
 import '../components/FxDataTable.js';
-import '../components/FxReferencesButton.js'
+import '../components/FxReferencesButton.js';
+import '../components/FxNavButton.js';
 
 // import the mixin
 import { FxDataPageMixin } from '../mixins/FxDataPageMixin.js';
@@ -91,7 +92,10 @@ export default class TablePage extends baseClass {
 
 			return html`
 				<tr>
-					<td><fx-references-button class='very-small' .xmlNode=${baseTable} label='R'></fx-references-button></td>
+					<td>
+						<fx-references-button .xmlNode=${baseTable}>R</fx-references-button>
+						<fx-nav-button class='nav very-small' href='/detail?uuid=${uuid}'>D</fx-nav-button>
+					</td>
 					<td @click=${route} href=${`/table?id=${id}`}>${baseTable.getAttribute('name')}</td>
 					<td @click=${route} href=${`/field?tableId=${id}&showReferences=true`}>${fieldCount}</td>
 					<td @click=${route} href=${`table-occurrence?baseTableId=${id}`}>${occurrences}</td>

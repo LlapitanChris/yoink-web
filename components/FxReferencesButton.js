@@ -1,39 +1,21 @@
 import { LitElement, html, css } from 'https://cdn.skypack.dev/lit-element';
 
+import './FxNavButton.js';
+
 export class FxReferencesButton extends LitElement {
 
 	static get properties() {
 		return {
 			xmlNode: { type: Object },
-			label: { type: String, reflect: true }
 		}
 	}
 
 	static get styles() {
 		return css`
-			button {
-				border-radius: 5px;
-				padding: 0;
-				margin: 0;
-				cursor: pointer;
+			:host {
+				display: contents;
 			}
-			:host{
-				display: contents
-			}
-
-			:host(.small) button {
-				font-size: 0.8em;
-				padding: 2px 5px;
-			}
-
-			:host(.very-small) button {
-				font-size: 0.7em;
-				padding: 1px 3px;
-				border-radius: 3px;
-				border-width: 1px;
-			}
-		`
-	
+		`;
 	}
 
 	constructor() {
@@ -52,7 +34,7 @@ export class FxReferencesButton extends LitElement {
 		}
 
 		return html`
-			<button @click=${route} href=${`/reference?uuid=${uuid}&type=${referenceName}`}>${this.label}</button>
+			<fx-nav-button class='very-small nav' href=${`/reference?uuid=${uuid}&type=${referenceName}`}><slot></slot></fx-nav-button>
 		`
 	}
 

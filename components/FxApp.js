@@ -12,6 +12,7 @@ import '../pages/ScriptPage.js';
 import '../pages/ScriptStepPage.js';
 import '../pages/ReferencePage.js';
 import '../pages/LayoutPage.js';
+import '../pages/DetailPage.js';
 
 
 
@@ -24,7 +25,7 @@ export default class FxApp extends LitElement {
 			'/': 'fx-home-page',
 			'/index.html': 'fx-home-page',
 			'/about': 'fx-about-page',
-			'/table': 'fx-table-page',
+			'/base-table': 'fx-table-page',
 			'/field': 'fx-field-page',
 			'/catalog': 'fx-catalog-page',
 			'/file-access': 'fx-file-access-page',
@@ -32,7 +33,8 @@ export default class FxApp extends LitElement {
 			'/script': 'fx-script-page',
 			'/script-step': 'fx-script-step-page',
 			'/reference': 'fx-reference-page',
-			'/layout': 'layout-page'
+			'/layout': 'layout-page',
+			'/detail': 'detail-page'
 		}
 	}
 
@@ -64,7 +66,7 @@ export default class FxApp extends LitElement {
 			<form>
 				<label for="file-upload">Upload an XML file:</label>
 				<input type="file" id="file-upload" name="file-upload">
-				<button type="submit" @click=${this.readFile}>Submit</button>
+				<button type="button" @click=${this.readFile}>Submit</button>
 			</form>
 			`
 		}

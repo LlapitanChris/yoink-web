@@ -1,6 +1,7 @@
 import { FxDatabaseElementMixin } from "../mixins/FxDatabaseElementMixin.js";
 import { LitElement, html, css, nothing } from 'https://cdn.skypack.dev/lit-element';
 import './FxCalculation.js';
+import './FxNavButton.js';
 
 export default class FxNodePill extends LitElement {
 
@@ -66,7 +67,6 @@ export default class FxNodePill extends LitElement {
 				border: 1px solid hsl( 20, 68.20%, 69.20%);
 			}
 
-
 			`;
 	}
 
@@ -95,10 +95,14 @@ export default class FxNodePill extends LitElement {
 		this.title = this.type
 		this.classList.add(`${this.type.toLowerCase()}-pill`);
 
+		const detailButtonTemplate = html`
+			<fx-nav-button class='very-small' @click=${route} href='/detail?uuid=${this.uuid}'>D</fx-nav-button>
+		`
+
 		if(!this[this.type + 'Template']) {
-			return this.defaultTemplate();
+			return [this.defaultTemplate(), this.uuid ? detailButtonTemplate : nothing];
 		} else {
-			return this[this.type + 'Template']();
+			return [this[this.type + 'Template'](), detailButtonTemplate];
 		}
 	}
 
@@ -173,7 +177,8 @@ export default class FxNodePill extends LitElement {
 	}
 
 	LayoutTemplate() {
-		const layoutName = this.node.getAttribute('name');
+		const layoutName = this.node.getAttribute('name') ||
+			this.node.querySelector('LayoutReference').getAttribute('name');
 		return html`
 			<span id='type'>${this.type}:</span>
 			<span id='name'>${layoutName}</span>

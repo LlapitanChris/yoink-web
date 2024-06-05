@@ -17,7 +17,7 @@ export default class HomePage extends baseClass {
 			<h1 slot='title'>Home Page</h1>
 			<p>This is the home page</p>
 			<a href="/catalog" @click=${route}>Catalogs</a>
-			<a href="/table" @click=${route}>Tables</a>
+			<a href="/base-table" @click=${route}>Tables</a>
 			<a href="/table-occurrence" @click=${route}>Table Occurrences</a>
 			<a href="/script" @click=${route}>Script</a>
 			<a href="/script-step" @click=${route}>Script Steps</a>
