@@ -113,8 +113,7 @@ export default class LayoutPage extends baseClass {
 				<tr id=${uuid}>
 					<td><fx-references-button
 					.xmlNode=${item} 
-					label='r'
-					class='very-small'></fx-references-button></td>
+					>R</fx-references-button></td>
 					<td>${name}</td>
 					<td>${id}</td>
 					<td>${tableName}</td>

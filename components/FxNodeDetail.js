@@ -16,11 +16,8 @@ export default class FxNodeDetail extends LitElement {
 		return css`
 			:host {
 				display: block;
-				width: 100%;
 				margin: 0;
 				padding: 0;
-				overflow-y: auto;
-				overflow-x: hidden;
 			}
 			`;
 	}
@@ -58,6 +55,7 @@ export default class FxNodeDetail extends LitElement {
 
 	defaultTemplate() {
 		const name = this.node.getAttribute('name') || this.type;
+
 		return html`
 			<div class='header'>
 				<span id='type'>${this.type}: </span>
@@ -65,7 +63,7 @@ export default class FxNodeDetail extends LitElement {
 			</div>
 
 			<div class='content'>
-				${this.node.innerHTML}
+				${this.node.cloneNode(true)}
 			</div>
 
 			`;

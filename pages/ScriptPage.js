@@ -1,6 +1,7 @@
 import { LitElement, html } from 'https://cdn.skypack.dev/lit-element';
 import { FxDataPageMixin } from "../mixins/FxDataPageMixin.js";
 import '../components/FxDataTable.js';
+import '../components/FxReferencesButton.js';
 
 const baseClass = FxDataPageMixin(LitElement);
 
@@ -91,7 +92,10 @@ export default class FxScriptPage extends baseClass {
 			const uuid = item.querySelector('UUID')?.textContent || item.getAttribute('UUID');
 			return html`
 				<tr>
-					<td><button @click=${route} href=${`/reference?uuid=${uuid}&type=ScriptReference`}>R</button></td>
+					<td>
+						<fx-references-button .xmlNode=${item}>R</fx-references-button>
+						<fx-nav-button href='call-chain?uuid=${uuid}'>CC</fx-nav-button>
+					</td>
 					<td @click=${route} href=${`/script-step?scriptId=${item.getAttribute('id')}`}>${item.getAttribute('name')}</td>
 					<td>${item.getAttribute('id')}</td>
 					<td>${type == 'True' ? 'Folder' : type}</td>

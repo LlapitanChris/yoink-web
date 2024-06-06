@@ -106,7 +106,7 @@ export default class TableOccurrencePage extends baseClass {
 
 			return html`
 				<tr>
-					<td><fx-references-button .xmlNode=${item} label='R' class='very-small'></fx-references-button></td>
+					<td><fx-references-button .xmlNode=${item}>R</fx-references-button></td>
 					<td @click=${route} href=${`/table-occurrence?id=${item.getAttribute('id')}`}>${item.getAttribute('name')}</td>
 					<td>
 						<div class='color' style='width: 10px; height: 10px; background-color: rgb(${r}, ${g}, ${b})'></div>

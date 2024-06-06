@@ -1,7 +1,6 @@
 import { LitElement, html, css } from 'https://cdn.skypack.dev/lit-element';
 
 import '../components/FxPage.js';
-import '../components/FxNodeDetail.js';
 
 // import the mixin
 import { FxDataPageMixin } from '../mixins/FxDataPageMixin.js';
@@ -9,7 +8,7 @@ import { FxDataPageMixin } from '../mixins/FxDataPageMixin.js';
 // create the class
 const baseClass = FxDataPageMixin(LitElement);
 
-export default class DetailPage extends baseClass {
+export default class CallChainPage extends baseClass {
 	static get styles() {
 		return css``;
 	}
@@ -42,16 +41,30 @@ export default class DetailPage extends baseClass {
 	render() {
 
 		super.setPropsFromUrl();
+		const uuid = this.uuid;
+		const node = this.node;
 
-		const type = this.node.tagName;
+		const uuidNode = node.querySelector('UUID');
+		const name = node.getAttribute('name');
+		const id = node.id;
+
+		// find all times this script is referenced
+		const result = super.xpath(`//AddAction//ScriptReference[@UUID='${uuid}']`, XPathResult.ORDERED_NODE_ITERATOR_TYPE);
+		const references = [];
+		let ref;
+		while( ref = result.iterateNext() ) {
+			references.push(ref);
+		}
+
+		
+
 
 		return html`
 			<fx-page>
-				<h1 slot='title'>${type} Detail</h1>
-				<fx-node-detail .node=${this.node}></fx-node-detail>
+				<h1 slot='title'>${name} Call Chain</h1>
 			</fx-page>`
 	}
 
 }
 
-customElements.define('detail-page', DetailPage);
+customElements.define('call-chain-page', CallChainPage);

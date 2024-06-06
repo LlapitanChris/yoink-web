@@ -4,6 +4,8 @@ import { FxDataPageMixin } from "../mixins/FxDataPageMixin.js";
 import '../components/FxField.js';
 import '../components/FxDataTable.js';
 import '../components/FxReferencesButton.js';
+import '../components/FxNavButton.js';
+import '../components/FxAnchor.js';
 
 const baseClass = FxDataPageMixin(LitElement);
 
@@ -69,12 +71,23 @@ export default class FieldsPage extends baseClass {
 					<th></th>
 					<th>Table</th>
 					<th>Field</th>
-					${ this.showReferences ? html`<th>References</th>` : '' }
-					<th>Mod Count</th>
-					<th>Username</th>
-					<th>Account Name</th>
+					<th>Mod</th>
+					<th>Account</th>
 					<th>Timestamp</th>
 				</tr>
+			`;
+		}
+
+		const columnGroupTemplate = () => { 
+			return html`
+				<colgroup>
+					<col style='width: 50px'></col>
+					<col></col>
+					<col></col>
+					<col style='width: 6ch'></col>
+					<col style='width: 200px'></col>
+					<col style='width: 200px'></col>
+				</colgroup>
 			`;
 		}
 
@@ -86,16 +99,12 @@ export default class FieldsPage extends baseClass {
 			const uuid = field.querySelector('UUID').textContent;
 			return html`
 				<tr>
-					<td><fx-references-button .xmlNode=${field} label='R'></fx-references-button></td>
-					<td @click=${route} href=${`/base-table?id=${tableId}`}>${tableName}</td>
-					<td @click=${route} href=${`/field?id=${id}`}>${field.getAttribute('name')}</td>
-					${
-						this.showReferences ? html`
-							<td @click=${route} href=${`/reference?uuid=${uuid}&type=FieldReference`}>${super.xpath(`//FieldReference[@UUID='${uuid}']`, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE).snapshotLength}</td>
-						` : ''
-					}
+					<td>
+						<fx-references-button .xmlNode=${field}>R</fx-references-button>
+					</td>
+					<td><fx-a href=${`table-occurrence?baseTableId=${id}`}>${tableName}</fx-a></td>
+					<td><fx-a href=${`/detail?uuid=${uuid}`}>${field.getAttribute('name')}</fx-a></td>
 					<td>${field.querySelector('UUID')?.getAttribute('modifications')}</td>
-					<td>${field.querySelector('UUID')?.getAttribute('userName')}</td>
 					<td>${field.querySelector('UUID')?.getAttribute('accountName')}</td>
 					<td>${new Date(field.querySelector('UUID')?.getAttribute('timestamp')).toLocaleString()}</td>
 				</tr>
@@ -103,13 +112,18 @@ export default class FieldsPage extends baseClass {
 		} 
 
 		const dataTableTemplate = html`
-			<fx-data-table .data=${super.xpath(this.xpathString, XPathResult.ORDERED_NODE_ITERATOR_TYPE)} .columnsTemplate=${columnHeaderTemplate} .rowTemplate=${rowTemplate}></fx-data-table>
+			<fx-data-table
+			.data=${super.xpath(this.xpathString, XPathResult.ORDERED_NODE_ITERATOR_TYPE)} 
+			.columnsTemplate=${columnHeaderTemplate} 
+			.rowTemplate=${rowTemplate}
+			.columnGroupTemplate=${columnGroupTemplate}>
+			</fx-data-table>
 		`;
 
 		return html`
 			<fx-page>
 				${this.headerTemplate()}
-				${cache(dataTableTemplate)}
+				${dataTableTemplate}
 			</fx-page>
 		`;
 		

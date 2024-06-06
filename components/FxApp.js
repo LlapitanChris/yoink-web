@@ -13,6 +13,7 @@ import '../pages/ScriptStepPage.js';
 import '../pages/ReferencePage.js';
 import '../pages/LayoutPage.js';
 import '../pages/DetailPage.js';
+import '../pages/CallChainPage.js';
 
 
 
@@ -34,7 +35,8 @@ export default class FxApp extends LitElement {
 			'/script-step': 'fx-script-step-page',
 			'/reference': 'fx-reference-page',
 			'/layout': 'layout-page',
-			'/detail': 'detail-page'
+			'/detail': 'detail-page',
+			'/call-chain': 'call-chain-page'
 		}
 	}
 
@@ -92,7 +94,7 @@ export default class FxApp extends LitElement {
 	route = (event) => {
 		console.log('Route function called', event.target.getAttribute('href'), event.target);
 		event.preventDefault();
-		const path = event.target.getAttribute('href');
+		const path = event.target?.getAttribute('href') || event.currentTarget?.getAttribute('href') || event.target?.href || event.currentTarget?.href;
 		window.history.pushState({}, '', path);
 		// call the function to update the page
 		this.updatePage();

@@ -55,12 +55,13 @@ export default class CatalogPage extends FxDataPageMixin(LitElement) {
 
 			const name = catalog.nodeName;
 			const nameKebabCase = name.replace(/([A-Z])/g, (g) => `-${g[0].toLowerCase()}`).slice(1);
+			const nameProper = name.replace(/([A-Z])/g, (g) => ` ${g[0]}`).slice(1);
 			// remove the 'Catalog' from the name
 			const nameClean = nameKebabCase.replace('-catalog', '');
 
 			return html`
 				<tr>
-					<td><a @click=${route} href=${`/${nameClean}`}>${catalog.nodeName}</a></td>
+					<td><a @click=${route} href=${`/${nameClean}`}>${nameProper}</a></td>
 					<td>${
 						catalog.nodeName == 'FileAccessCatalog' ?
 						catalog.querySelector('ObjectList').getAttribute('membercount') :

@@ -10,6 +10,7 @@ import '../components/FxPage.js';
 import '../components/FxDataTable.js';
 import '../components/FxReferencesButton.js';
 import '../components/FxNavButton.js';
+import '../components/FxAnchor.js';
 
 // import the mixin
 import { FxDataPageMixin } from '../mixins/FxDataPageMixin.js';
@@ -59,10 +60,10 @@ export default class TablePage extends baseClass {
 			<colgroup>
 				<col style='width: 50px'></col>
 				<col style='width: 200'></col>
+				<col style='width: 6ch'></col>
+				<col style='width: 6ch'></col>
 				<col style='width: 100px'></col>
-				<col style='width: 100px'></col>
-				<col style='width: 100px'></col>
-				<col style='width: 100px'></col>
+				<col style='width: 200px'></col>
 				<col style='width: 200px'></col>
 			</colgroup>
 		`;
@@ -74,11 +75,10 @@ export default class TablePage extends baseClass {
 				<tr>
 					<th></th>
 					<th>Base Table</th>
-					<th>Field Count</th>
+					<th>Fields</th>
 					<th>Occ</th>
-					<th>Mod Count</th>
-					<th>Username</th>
-					<th>Account Name</th>
+					<th>Mod</th>
+					<th>Account</th>
 					<th>Timestamp</th>
 				</tr>
 			`;
@@ -90,17 +90,16 @@ export default class TablePage extends baseClass {
 			const fieldCount = super.xpath(`(//FieldsForTables//BaseTableReference[@id="${id}"]/following-sibling::ObjectList/@membercount)`, XPathResult.NUMBER_TYPE).numberValue;
 			const occurrences = super.xpath(`count(//TableOccurrenceCatalog//BaseTableReference[@id="${id}"]/ancestor::TableOccurrence)`, XPathResult.NUMBER_TYPE).numberValue;
 
+			
 			return html`
 				<tr>
 					<td>
 						<fx-references-button .xmlNode=${baseTable}>R</fx-references-button>
-						<fx-nav-button class='nav very-small' href='/detail?uuid=${uuid}'>D</fx-nav-button>
 					</td>
-					<td @click=${route} href=${`/table?id=${id}`}>${baseTable.getAttribute('name')}</td>
-					<td @click=${route} href=${`/field?tableId=${id}&showReferences=true`}>${fieldCount}</td>
-					<td @click=${route} href=${`table-occurrence?baseTableId=${id}`}>${occurrences}</td>
+					<td><fx-a href=${`/detail?uuid=${uuid}`}>${baseTable.getAttribute('name')}</fx-a></td>
+					<td><fx-a href=${`/field?tableId=${id}&showReferences=true`}>${fieldCount}</fx-a></td>
+					<td><fx-a href=${`table-occurrence?baseTableId=${id}`}>${occurrences}</fx-a></td>
 					<td>${baseTable.querySelector('UUID')?.getAttribute('modifications')}</td>
-					<td>${baseTable.querySelector('UUID')?.getAttribute('userName')}</td>
 					<td>${baseTable.querySelector('UUID')?.getAttribute('accountName')}</td>
 					<td>${new Date(baseTable.querySelector('UUID')?.getAttribute('timestamp')).toLocaleString()}</td>
 				</tr>

@@ -2,6 +2,7 @@ import { FxDatabaseElementMixin } from "../mixins/FxDatabaseElementMixin.js";
 import { LitElement, html, css, nothing } from 'https://cdn.skypack.dev/lit-element';
 import './FxCalculation.js';
 import './FxNavButton.js';
+import './FxButton.js';
 
 export default class FxNodePill extends LitElement {
 
@@ -24,6 +25,7 @@ export default class FxNodePill extends LitElement {
 				font-size: 0.8em;
 				overflow: hidden;
 				text-overflow: ellipsis;
+				position: relative;
 			}
 			
 			:host([hide-type]) #type {
@@ -67,6 +69,30 @@ export default class FxNodePill extends LitElement {
 				border: 1px solid hsl( 20, 68.20%, 69.20%);
 			}
 
+			#popover {
+				position: fixed;
+				background-color: white;
+				border: 1px solid #ccc;
+				border-radius: 5px;
+				padding: 5px;
+				width: 80vw;
+				max-height: 80vh;
+				overflow: auto;
+				white-space: pre-line;
+				
+			}
+
+			button[popovertarget] {
+				border-radius: 5px;
+				padding: 0;
+				margin: 0;
+				cursor: pointer;
+				border: 1px solid #ccc;
+				font-size: 0.7em;
+				padding: 1px 3px;
+				border-radius: 3px;
+				border-width: 1px;
+			}
 			`;
 	}
 
@@ -78,7 +104,7 @@ export default class FxNodePill extends LitElement {
 	set node(value) {
 		this._node = value;
 		this.type = value.nodeName;
-		this.uuid = value.querySelector('UUID')?.textContent || value.getAttribute('UUID');
+		this.uuid = value.getAttribute('UUID') || value.querySelector('UUID')?.textContent;
 	}
 
 	get node() {
@@ -99,10 +125,17 @@ export default class FxNodePill extends LitElement {
 			<fx-nav-button class='very-small' @click=${route} href='/detail?uuid=${this.uuid}'>D</fx-nav-button>
 		`
 
+		const popoverTemplate = html`
+			<button popovertarget='popover'>P</button>
+			<div popover id='popover'>
+				${this.node.innerHTML}
+			</div>
+		`;
+
 		if(!this[this.type + 'Template']) {
-			return [this.defaultTemplate(), this.uuid ? detailButtonTemplate : nothing];
+			return [this.defaultTemplate(), this.uuid ? detailButtonTemplate : nothing, popoverTemplate];
 		} else {
-			return [this[this.type + 'Template'](), detailButtonTemplate];
+			return [this[this.type + 'Template'](), detailButtonTemplate, popoverTemplate];
 		}
 	}
 

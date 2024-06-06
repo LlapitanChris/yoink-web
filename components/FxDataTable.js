@@ -65,6 +65,7 @@ export default class FxDataTable extends LitElement {
 		// if we get an xpathresult, convert it to an array
 		let data;
 		if (value.constructor.name === 'XPathResult') {
+			// get the first value
 			let item = value.iterateNext();
 			data = [];
 			while (item) {
