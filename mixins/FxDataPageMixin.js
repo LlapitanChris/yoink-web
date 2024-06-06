@@ -2,7 +2,19 @@ import '../components/FxPage.js';
 import { html } from 'https://cdn.skypack.dev/lit-element';
 import { classMap } from 'https://cdn.skypack.dev/lit-html/directives/class-map';	
 
+import { chunksToSkip, rootNodeNames } from '../constants.js';
+
 export const FxDataPageMixin = (baseClass) => class extends baseClass { 
+	static chunksToSkip = [
+		'ObjectList', 'PartsList', 'JoinPredicateList', 'ParameterValues', 'StepsForScripts',
+		'ChunkList', 'Chunk', 'value', 'action', 'Conditions', 'JoinPredicate', 'TabPanel', 'ScriptTriggers', 'List',
+
+	]
+
+	static rootNodeNames = [
+		'AddAction',
+		'FMSaveAsXML',
+	]
 
 	static get properties() { 
 		return {
@@ -87,6 +99,61 @@ export const FxDataPageMixin = (baseClass) => class extends baseClass {
 			node = nodes.iterateNext();
 		}
 		return components;
+	}
+
+	getElementAncestors(element) {
+
+		const exitWhen = rootNodeNames;
+		console.assert(element, 'no element provided to getElementAncestors');
+		console.assert(chunksToSkip, 'no chunksToSkip provided to getElementAncestors', super.chunksToSkip);
+		console.assert(exitWhen, 'no exitWhen provided to getElementAncestors');
+
+		const ancestors = [];
+
+		while (element) {
+
+			// exit if name is in exitWhen or name includes
+			// 'Catalog'
+			if (exitWhen.includes(element.nodeName) || element.nodeName.includes('Catalog')) {
+				break;
+			}
+
+			// skip if name is in chunksToSkip
+			if (chunksToSkip.includes(element.nodeName)) {
+				element = element.parentElement;
+				continue;
+			}
+			// skip if this node is the same name as the parent,
+			// the parent element is what we want.
+			if (element.nodeName == element.parentElement.nodeName) {
+				element = element.parentElement;
+				continue;
+			}
+			// specific to layoutObjects
+			// if the parent is a layoutObject and the element is the same type as the parent
+			// then the parent is what we want.
+			if (
+				element.parentElement.nodeName == 'LayoutObject' &&
+				element.nodeName == element.parentElement.getAttribute('type').replace(' ', '')
+			) {
+				element = element.parentElement;
+				continue;
+			}
+
+			// add the element to the ancestors array
+			ancestors.push(element);
+
+			// iterate to the next parent element
+			element = element.parentElement;
+
+		}
+
+		// if there are no ancestors, return nothing
+		if (ancestors.length <= 1) {
+			return nothing;
+		}
+
+		return ancestors;
 	}
 
 }
