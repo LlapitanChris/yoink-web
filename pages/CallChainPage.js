@@ -10,9 +10,6 @@ import { FxDataPageMixin } from '../mixins/FxDataPageMixin.js';
 const baseClass = FxDataPageMixin(LitElement);
 
 export default class CallChainPage extends baseClass {
-	static get styles() {
-		return css``;
-	}
 
 	static get properties() {
 		return {
@@ -49,92 +46,131 @@ export default class CallChainPage extends baseClass {
 		const name = node.getAttribute('name');
 		const id = node.id;
 
-		// find all times this script is referenced
-		const calledByNodes = super.xpath(`//AddAction//ScriptReference[@UUID='${uuid}']`, XPathResult.ORDERED_NODE_ITERATOR_TYPE);
-		const callsScriptNodes = super.xpath(`//AddAction/StepsForScripts/Script/ScriptReference[@UUID="${uuid}"]/..//ScriptReference`, XPathResult.ORDERED_NODE_ITERATOR_TYPE);
 
-		// turn into array
+		const buildCallMap = (
+			node,
+			x = 0,
+			y = 0,
+			map = new Map(),
+			set = new Set(),
+		) => {
+			// get the uuid from the node
+			const uuid = node.getAttribute('UUID') ||
+				node.querySelector(':scope > UUID')?.textContent ||
+				node.querySelector(':scope > ScriptReference').getAttribute('UUID');
+			console.assert(uuid, 'No UUID found on node');
 
-		// let ref;
-		// while (ref = calledByNodes.iterateNext()) {
-		// 	parent = ref.closest('LayoutObject') ||
-		// 		ref.closest('Script') ||
-		// 		ref.closest('Layout')
-
-		// 	if (parent.querySelector('UUID')?.textContent == uuid ||
-		// 		parent.getAttribute('UUID') == uuid ||
-		// 		parent.tagName === 'Script' && parent.querySelector(':scope > ScriptReference').getAttribute('UUID') == uuid) {
-		// 		continue;
-		// 	}
-		// 	calledBy.push(parent);
-		// }
-
-		// while (ref = callsScriptNodes.iterateNext()) {
-		// 	if (ref.querySelector('UUID')?.textContent == uuid ||
-		// 		ref.getAttribute('UUID') == uuid
-		// 	) {
-		// 		continue;
-		// 	}
-		// 	calls.push(ref);
-		// }
-
-		const getElementsArray = (xPathResult, skipUuid, chooseParent = false) => {
-			const array = [];
-			let node
-			while (node = xPathResult.iterateNext()) {
-				if (chooseParent) {
-					node = node.closest('LayoutObject') || node.closest('Script') || node.closest('Layout');
+			const xpathToArray = (xPathResult) => {
+				const array = [];
+				let thisNode;
+				while (thisNode = xPathResult.iterateNext()) {
+					array.push(thisNode);
 				}
-
-				if (skipUuid) {
-					// determine what the UUID is... 
-					const uuidNode = node.querySelector('UUID');
-					let uuid;
-					if (node.tagName == 'Script') {
-						uuid = node.querySelector(':scope > ScriptReference').getAttribute('UUID');
-					} else {
-						uuid = uuidNode?.textContent || node.getAttribute('UUID');
-					}
-
-					if (uuid == this.uuid) {
-						continue;
-					}
-
-				}
-
-				array.push(node);
+				return array;
 			}
-			return array;
+
+			const resultType = XPathResult.ORDERED_NODE_ITERATOR_TYPE;
+
+			// find all the times this script is referenced
+			const callingElements = super.xpath(`//AddAction//ScriptReference[@UUID='${uuid}']`, resultType);
+
+			// find all the times this script calls another script
+			const calledScripts = super.xpath(`//AddAction/StepsForScripts/Script/ScriptReference[@UUID="${uuid}"]/..//ScriptReference`, resultType);
+			const callingElementsArray = xpathToArray(callingElements);
+			const calledScriptsArray = xpathToArray(calledScripts);
+
+			// if the map doesn't have the x, add it
+			if (!map.has(x)) map.set(x, new Map());
+
+			// add an array to the map at x
+			if (!map.get(x).has(uuid)) map.get(x).set(uuid, []);
+
+			// get the array at the x
+			const array = map.get(x).get(uuid);
+
+			// add the node to the array on the map
+			const clone = node.cloneNode(false);
+			array.push(clone);
+
+			// update y
+			y = y++;
+
+			// if the uuid is not in the set, add it
+			// if it IS in the set we dont' want to draw the full tree
+			// more than once, so we skip it
+			if (!set.has(uuid)) {
+				set.add(uuid);
+				// for each calling element, add to the map
+				if (x <= 0) {
+					for (const callingElement of callingElementsArray) {
+						// get nearest relevant ancestor
+						// this is either a LayoutObject or a Script
+						const ancestor = callingElement.closest('LayoutObject') ||
+							callingElement.closest('Script').querySelector('ScriptReference');
+						console.assert(ancestor, 'No ancestor found for calling element', ancestor);
+						buildCallMap(ancestor, x - 1, y, map, set);
+					}
+				}
+
+				if (x >= 0) {
+					// for each called script, add to the map
+					for (const calledScript of calledScriptsArray) {
+						buildCallMap(calledScript, x + 1, y, map, set);
+					}
+				}
+
+			}
+
+			return {
+				map,
+				set,
+			}
+
 		}
 
-		const calledBy = getElementsArray(calledByNodes, this.uuid, true);
-		const calls = getElementsArray(callsScriptNodes, this.uuid, false);
+		// build the call map
+		const { map: callMap, set: setOfAll } = buildCallMap(node);
 
-		const processNodes = (nodes) => {
-			console.log('nodes', nodes)
+		// convert the map to an array sorted by map key (level)
+		const columnsArray = Array.from(callMap).sort((a, b) => a[0] - b[0]);
+		console.log('columnsArray', columnsArray)
 
-			const ancestors = nodes.map(node => {
-				return html`<fx-node-pill .node=${node} ?hide-type=${false}></fx-node-pill>`;
-			})
+		// create the columns
+		// assign the columns to the correct grid column
+		// use the array index to determine the column number
+		const columns = columnsArray.map(([level, map], colIndex) => {
+			console.assert(map, 'No map found')
+			console.assert(map.size, 'No size found')
+
+			// create an element for each element in the map
+			const elements = Array.from(map).map(([uuid, nodes]) => {
+				const node = nodes[0];
+				return html`
+					<fx-node-pill
+					.node=${node}
+					>
+					</fx-node-pill>
+				`;
+			});
 
 			return html`
-				<ul>
-					${ancestors.map(ancestor => html`<li>${ancestor}</li>`)}
-				</ul>`;
+				<div class='column' style='grid-column: ${colIndex + 1}' id="${level}">
+					${elements}
+				</div>
+			`;
+		});
 
-		}
+		console.log('columns', columns)
+
+
+
 
 
 		return html`
 			<fx-page>
 				<h1 slot='title'>${name} Call Chain</h1>
-				<div>
-					<h2>Called By:</h2>
-					${processNodes(calledBy)}
-				</div>
-				<div>
-					<h2>Calls:</h2>
-					${processNodes(calls)}
+				<div class='call-chain'>
+					${columns}
 				</div>
 			</fx-page>`
 	}
