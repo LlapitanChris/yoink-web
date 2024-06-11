@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'https://cdn.skypack.dev/lit-element';
+import { LitElement, html, svg, render } from 'https://cdn.skypack.dev/lit-element';
 
 import '../components/FxPage.js';
 import '../components/FxNodePill.js';
@@ -50,14 +50,16 @@ export default class CallChainPage extends baseClass {
 		const buildCallMap = (
 			node,
 			x = 0,
-			y = 0,
 			map = new Map(),
 			set = new Set(),
+			thisLine = [],
+			allLines = [],
 		) => {
 			// get the uuid from the node
 			const uuid = node.getAttribute('UUID') ||
 				node.querySelector(':scope > UUID')?.textContent ||
 				node.querySelector(':scope > ScriptReference').getAttribute('UUID');
+
 			console.assert(uuid, 'No UUID found on node');
 
 			const xpathToArray = (xPathResult) => {
@@ -76,47 +78,110 @@ export default class CallChainPage extends baseClass {
 
 			// find all the times this script calls another script
 			const calledScripts = super.xpath(`//AddAction/StepsForScripts/Script/ScriptReference[@UUID="${uuid}"]/..//ScriptReference`, resultType);
+
+			// convert the xpath result to an array
 			const callingElementsArray = xpathToArray(callingElements);
 			const calledScriptsArray = xpathToArray(calledScripts);
 
-			// if the map doesn't have the x, add it
+			// if the map doesn't have the x (column), add it
 			if (!map.has(x)) map.set(x, new Map());
 
+			// set y to the number of elements in the map
+			// making this a variable because we will increment it
+			let y = map.get(x).size;
+
 			// add an array to the map at x
-			if (!map.get(x).has(uuid)) map.get(x).set(uuid, []);
+			map.get(x).set(y, []);
 
 			// get the array at the x
-			const array = map.get(x).get(uuid);
+			const array = map.get(x).get(y);
 
 			// add the node to the array on the map
 			const clone = node.cloneNode(false);
 			array.push(clone);
 
-			// update y
-			y = y++;
+
+
 
 			// if the uuid is not in the set, add it
-			// if it IS in the set we dont' want to draw the full tree
+			// if it IS in the set we don't want to draw the full tree
 			// more than once, so we skip it
 			if (!set.has(uuid)) {
 				set.add(uuid);
+
+				// add this element to the line
+				thisLine.push([x, y]);
+
+				// clone the original line so we can start here again
+				// if we need to draw in the other direction too
+				const lineClone = [...thisLine];
+
 				// for each calling element, add to the map
 				if (x <= 0) {
-					for (const callingElement of callingElementsArray) {
+
+					// if we're at the root add this line to the allLines array
+					if (x === 0) allLines.push(thisLine);
+
+					callingElementsArray.forEach((callingElement, index) => {
+
 						// get nearest relevant ancestor
 						// this is either a LayoutObject or a Script
-						const ancestor = callingElement.closest('LayoutObject') ||
+						const ancestor =
+							callingElement.closest('LayoutObject') ||
 							callingElement.closest('Script').querySelector('ScriptReference');
+
+						// ensure we have an ancestor
 						console.assert(ancestor, 'No ancestor found for calling element', ancestor);
-						buildCallMap(ancestor, x - 1, y, map, set);
-					}
+
+						// if index is > 0, we're drawing another item in THIS column (x)
+						// so we need to reset the y value
+						// this is a BRANCH, so we need to create a new line
+						// the new line will be a copy of the current line with the new x,y
+						let newLine;
+
+						if (index > 0) {
+							y = map.get(x).size;
+							newLine = [...lineClone.slice(0, -1), [x, y]];
+							// add the new line to the allLines array
+							allLines.push(newLine);
+							console.log('duplicated line', newLine, 'position', allLines.length - 1)
+						}
+
+
+						buildCallMap(
+							ancestor, x - 1, map, set,
+							newLine || thisLine, allLines
+						);
+
+					});
 				}
 
+				// now start drawing to the right
 				if (x >= 0) {
-					// for each called script, add to the map
-					for (const calledScript of calledScriptsArray) {
-						buildCallMap(calledScript, x + 1, y, map, set);
+
+					// starting from the original node
+					if (x === 0) {
+						thisLine = [...lineClone]
+						allLines.push(thisLine);
 					}
+
+					// for each called script, add to the map
+					calledScriptsArray.forEach((calledScript, index) => {
+
+						let newLine;
+
+						if (index > 0) {
+							y = map.get(x).size;
+							newLine = [...lineClone.slice(0, -1), [x, y]];
+							allLines.push(newLine);
+						}
+
+						buildCallMap(
+							calledScript, x + 1, map, set,
+							newLine || thisLine, allLines
+						);
+
+					});
 				}
 
 			}
@@ -124,55 +189,83 @@ export default class CallChainPage extends baseClass {
 			return {
 				map,
 				set,
+				thisLine,
+				allLines
 			}
 
 		}
 
 		// build the call map
-		const { map: callMap, set: setOfAll } = buildCallMap(node);
+		const { map: callMap, set: setOfAll, gridY: gridRowCount, allLines } = buildCallMap(node);
+		console.log('callMap', callMap, 'setOfAll', setOfAll, 'gridRowCount', gridRowCount, 'lines', allLines);
 
-		// convert the map to an array sorted by map key (level)
+
+		// convert the map to an array sorted by the x value
 		const columnsArray = Array.from(callMap).sort((a, b) => a[0] - b[0]);
-		console.log('columnsArray', columnsArray)
 
 		// create the columns
 		// assign the columns to the correct grid column
 		// use the array index to determine the column number
-		const columns = columnsArray.map(([level, map], colIndex) => {
+		const columns = columnsArray.map(([x, map], columnIndex) => {
 			console.assert(map, 'No map found')
 			console.assert(map.size, 'No size found')
 
 			// create an element for each element in the map
-			const elements = Array.from(map).map(([uuid, nodes]) => {
+			const elements = Array.from(map).map(([y, nodes]) => {
 				const node = nodes[0];
-				return html`
-					<fx-node-pill
-					.node=${node}
-					>
-					</fx-node-pill>
-				`;
+				const lines = this.splitTextIntoLines(node.getAttribute('name') || 'LayoutObject', 20);
+				const tspans = lines.map((line, i) => svg`<tspan x="100" y="${10 + i * 20}" text-anchor="middle">${line}</tspan>`);
+
+				const groupPosition = [columnIndex * 220, y * 120];
+				const groupBoundingBox = {
+					x: groupPosition[0],
+					y: groupPosition[1],
+					width: 200,
+					height: 100
+				}
+
+
+				return svg`
+					<g id="${x},${y}" transform="translate(${columnIndex * 220}, ${y * 120})">
+						<rect x="0" y="0" width="200" height="100" fill="white" stroke="black" stroke-width="1"></rect>
+						<text width="200">
+							${tspans}
+						</text>
+					</g>`;
 			});
 
-			return html`
-				<div class='column' style='grid-column: ${colIndex + 1}' id="${level}">
-					${elements}
-				</div>
-			`;
+			return html`${elements}`;
 		});
 
 		console.log('columns', columns)
 
 
-
-
-
 		return html`
 			<fx-page>
 				<h1 slot='title'>${name} Call Chain</h1>
-				<div class='call-chain'>
+				<div id='call-chain-container'>
+					<svg class='call-chain' xmlns="http://www.w3.org/2000/svg">
 					${columns}
+					</svg>
 				</div>
 			</fx-page>`
+	}
+
+	splitTextIntoLines(text, maxLength) {
+		const words = text.split(' ');
+		const lines = [];
+		let currentLine = words[0];
+
+		for (let i = 1; i < words.length; i++) {
+			if (currentLine.length + words[i].length + 1 > maxLength) {
+				lines.push(currentLine);
+				currentLine = words[i];
+			} else {
+				currentLine += ' ' + words[i];
+			}
+		}
+		lines.push(currentLine);
+		return lines;
 	}
 
 }

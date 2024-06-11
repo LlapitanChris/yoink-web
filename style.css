@@ -278,15 +278,40 @@ fx-reference-page tr.group-header-row {
 
 div.call-chain {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, 20ch);
-	grid-template-rows: repeat(auto-fill, 200px);
-	gap: 3rem;
+	grid-template-columns: repeat(auto-fill, 200px);
+	grid-template-rows: repeat(auto-fill, 80px);
+	gap: 30px;
 	width: 100%;
 	overflow-x: auto;
 	height: 100%;
+	position: relative;
 }
 
 div.call-chain div.column {
 	width: 20ch;
 
+}
+
+
+line {
+	stroke: black;
+	stroke-width: 2;
+}
+
+svg {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+}
+
+/* container to hold svg call-chain */
+#call-chain-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	width: 100%;
+	overflow: auto;
+	position: relative;
 }
