@@ -13,7 +13,8 @@ export default class CallChainPage extends baseClass {
 
 	static get properties() {
 		return {
-			uuid: { type: String }
+			uuid: { type: String },
+			nodePositions: { type: Map }
 		}
 	}
 
@@ -21,6 +22,7 @@ export default class CallChainPage extends baseClass {
 		super();
 		// initialize properties here
 		this.uuid;
+		this.nodePositions = new Map();
 
 	}
 
@@ -144,7 +146,6 @@ export default class CallChainPage extends baseClass {
 							newLine = [...lineClone.slice(0, -1), [x, y]];
 							// add the new line to the allLines array
 							allLines.push(newLine);
-							console.log('duplicated line', newLine, 'position', allLines.length - 1)
 						}
 
 
@@ -214,19 +215,35 @@ export default class CallChainPage extends baseClass {
 			const elements = Array.from(map).map(([y, nodes]) => {
 				const node = nodes[0];
 				const lines = this.splitTextIntoLines(node.getAttribute('name') || 'LayoutObject', 20);
-				const tspans = lines.map((line, i) => svg`<tspan x="100" y="${10 + i * 20}" text-anchor="middle">${line}</tspan>`);
+				const tspans = lines.map((line, i) => svg`<tspan x="100" y="${30 + i * 20}" text-anchor="middle">${line}</tspan>`);
 
-				const groupPosition = [columnIndex * 220, y * 120];
+				const idString = `${x},${y}`
+				const columnWidth = 200;
+				const rowHeight = 100;
+				const columnGap = 100;
+				const rowGap = 20;
+
+				const groupPosition = [columnIndex * (columnWidth + columnGap), y * (rowHeight + rowGap)];
 				const groupBoundingBox = {
 					x: groupPosition[0],
 					y: groupPosition[1],
-					width: 200,
-					height: 100
+					width: columnWidth,
+					height: rowHeight,
+					leftConnector: {
+						x: groupPosition[0],
+						y: groupPosition[1] + rowHeight / 2
+					},
+					rightConnector: {
+						x: groupPosition[0] + columnWidth,
+						y: groupPosition[1] + rowHeight / 2
+					}
 				}
+
+				this.nodePositions.set(idString, groupBoundingBox);
 
 
 				return svg`
-					<g id="${x},${y}" transform="translate(${columnIndex * 220}, ${y * 120})">
+					<g id="${idString}" transform="translate(${groupPosition[0]}, ${groupPosition[1]})">
 						<rect x="0" y="0" width="200" height="100" fill="white" stroke="black" stroke-width="1"></rect>
 						<text width="200">
 							${tspans}
@@ -237,7 +254,28 @@ export default class CallChainPage extends baseClass {
 			return html`${elements}`;
 		});
 
-		console.log('columns', columns)
+		console.log('nodePositions', this.nodePositions)
+
+		// draw the lines
+		const lines = allLines.map((line, index) => {
+			const path = line.map(([x, y]) => {
+				if (!this.nodePositions.has(`${x},${y}`)) return;
+
+				const groupPosition = this.nodePositions.get(`${x},${y}`);
+				const connector = x <= 0 ? groupPosition.rightConnector : groupPosition.leftConnector;
+				const otherConnector = x <= 0 ? groupPosition.leftConnector : groupPosition.rightConnector;
+				const x1 = connector.x;
+				const y1 = connector.y;
+
+				// draw a line between the two connectors
+				const x2 = otherConnector.x;
+				const y2 = otherConnector.y;
+
+				return `${x1},${y1} ${x2},${y2}`;
+			}).join(' ');
+
+			return svg`<polyline points="${path}" fill="none" stroke="black" stroke-width="1"></polyline>`;
+		});
 
 
 		return html`
@@ -246,6 +284,7 @@ export default class CallChainPage extends baseClass {
 				<div id='call-chain-container'>
 					<svg class='call-chain' xmlns="http://www.w3.org/2000/svg">
 					${columns}
+					${lines}
 					</svg>
 				</div>
 			</fx-page>`
