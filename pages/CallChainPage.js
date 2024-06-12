@@ -102,9 +102,6 @@ export default class CallChainPage extends baseClass {
 			const clone = node.cloneNode(false);
 			array.push(clone);
 
-
-
-
 			// if the uuid is not in the set, add it
 			// if it IS in the set we don't want to draw the full tree
 			// more than once, so we skip it
@@ -143,6 +140,7 @@ export default class CallChainPage extends baseClass {
 
 						if (index > 0) {
 							y = map.get(x).size;
+							// clone the line, remove the last element, and add the new x,y
 							newLine = [...lineClone.slice(0, -1), [x, y]];
 							// add the new line to the allLines array
 							allLines.push(newLine);
