@@ -1,0 +1,317 @@
+/* reset */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+/* end reset */
+
+body {
+	font-family: 'courier new', 'courier', 'monospace';
+	background-color: #f0f0f0;
+	font-size: 1rem;
+	box-sizing: border-box;
+	height: 97vh;
+	width: 100vw;
+
+}
+
+/* two columns layout */
+#apps-container {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: 1fr;
+}
+
+a {
+	text-decoration: none;
+	color: inherit;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+	
+	
+.detail-viewer {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 1rem;
+
+}
+
+.page-title {
+	font-size: 2rem;
+	margin-bottom: 1rem;
+	grid-column: 1 / -1;
+}
+
+fx-database-element {
+	--title-size: 1.25rem;
+	background-color: #f1efef;
+	border: 1px solid #c5c5c5;
+	border-radius: 10px;
+}
+
+fx-database-element fx-database-element {
+	--title-size: 1rem;
+}
+
+
+.detail-viewer {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: stretch;
+	gap: 1rem;
+	padding: 1rem;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	height: 500px;
+	overflow: auto;
+	background-color: rgba(255, 255, 255, 0.8);
+	animation: pop-in 0.5s ease-in-out;
+}
+
+
+
+.detail-viewer.hidden {
+	display: flex;
+	animation: pop-out 0.5s ease-in-out;
+	height: 0;
+	overflow: hidden;
+	padding: 0;
+	border: none;
+}
+
+.element-detail {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 1rem;
+	border: none;
+	
+}
+
+@keyframes pop-in {
+	from {
+		height: 0;
+		opacity: 0;
+	}
+	to {
+		height: 500px;		
+		opacity: 1;
+	}
+	
+}
+
+@keyframes pop-out {
+	from {
+		height: 500px;
+		opacity: 1;
+	}
+	to {
+		height: 0;
+		opacity: 0;
+	}
+	
+	
+}
+
+fx-data-table table {
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	border-collapse: collapse;
+	table-layout: fixed;
+
+}
+
+fx-data-table td, 
+fx-data-table th {
+	margin: 0;
+		padding: 0;
+		padding-bottom: .125rem;
+		padding-top: .125rem;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	text-align: left;
+	vertical-align: middle;
+		border-bottom: 1px solid #e0dfdf;
+}
+
+td:has(>div.color),
+td:has(>fx-references-button) {
+	padding: 0;
+}
+
+div.color {
+	width: 1rem;
+	height: 1rem;
+	border-radius: 50%;
+
+}
+
+
+fx-script-step-page fx-data-table td:first-of-type, 
+fx-script-step-page fx-data-table th:first-of-type{
+	width: 4ch;
+}
+
+fx-script-step-page fx-data-table td:nth-of-type(2), 
+fx-script-step-page fx-data-table th:nth-of-type(2){
+	width: 100%;
+}
+
+fx-script-step-page fx-data-table td:nth-of-type(3), 
+fx-script-step-page fx-data-table th:nth-of-type(3){
+	width: 4ch;
+}
+
+fx-script-step-row.logic {
+	color: blue
+}
+
+fx-script-step-row.comment {
+	color: green;
+}
+
+fx-script-step-row.disabled {
+	color: rgb(189, 188, 188);
+
+}
+
+fx-padding {
+	display: contents;
+}
+
+fx-padding #container{
+	display: inline-flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	gap: 0;
+}
+
+
+fx-padding #container div{
+	display: inline-block;
+	height: 10px;
+	width: 1.5rem;
+}
+
+fx-script-step-row {
+	display: contents;
+}
+
+
+
+fx-reference-page {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+fx-reference-page fx-data-table td,
+fx-reference-page fx-data-table th {
+	border: none;
+}
+fx-reference-page fx-data-table table {
+	table-layout: fixed;
+	overflow: auto;
+}
+
+
+fx-reference-page fx-data-table tr div {
+	display: inline-flex;
+	flex-direction: row-reverse;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+fx-reference-page tr.group-header-row {
+	background-color: #f1efef;
+	height: 2rem;
+}
+ 
+
+div.call-chain {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, 200px);
+	grid-template-rows: repeat(auto-fill, 80px);
+	gap: 30px;
+	width: 100%;
+	overflow-x: auto;
+	height: 100%;
+	position: relative;
+}
+
+div.call-chain div.column {
+	width: 20ch;
+
+}
+
+
+line {
+	stroke: black;
+	stroke-width: 2;
+}
+
+svg {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+}
+
+/* container to hold svg call-chain */
+#call-chain-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	width: 100%;
+	overflow: auto;
+	position: relative;
+}
