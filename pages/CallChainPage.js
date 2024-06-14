@@ -309,7 +309,7 @@ export default class CallChainPage extends baseClass {
 			<fx-page>
 				<h1 slot='title'>${name} Call Chain</h1>
 				<div id='call-chain-container' style='width:${totalWidth}px !important;'>
-					<svg class='call-chain' xmlns="http://www.w3.org/2000/svg" style='height: ${totalHeight}px !important; margin-top: 50vh;'>
+					<svg class='call-chain' xmlns="http://www.w3.org/2000/svg" style='height: ${totalHeight}px !important; margin-top: 50em;'>
 					${columns}
 					${lines}
 					</svg>
