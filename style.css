@@ -315,3 +315,16 @@ svg {
 	overflow: auto;
 	position: relative;
 }
+
+polyline {
+	fill: none;
+	stroke: black;
+	stroke-width: 3;
+	z-index: 0;
+}
+
+.active-line {
+	stroke: red;
+	stroke-width: 10;
+	z-index: 1000;
+}
