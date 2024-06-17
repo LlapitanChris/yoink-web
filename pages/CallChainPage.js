@@ -230,6 +230,13 @@ export default class CallChainPage extends baseClass {
 		// convert the map to an array sorted by the x value
 		const columnsArray = Array.from(callMap).sort((a, b) => a[0] - b[0]);
 
+
+		const columnWidth = 200;
+		const rowHeight = 100;
+		const columnGap = 100;
+		const rowGap = 20;
+		let maxY;
+
 		// create the columns
 		// assign the columns to the correct grid column
 		// use the array index to determine the column number
@@ -248,10 +255,7 @@ export default class CallChainPage extends baseClass {
 				const tspans = lines.map((line, i) => svg`<tspan x="100" y="${20 + i * 15}" text-anchor="middle">${line}</tspan>`)
 
 				const idString = `${x},${y}`
-				const columnWidth = 200;
-				const rowHeight = 100;
-				const columnGap = 100;
-				const rowGap = 20;
+				maxY = Math.max(y, maxY || 0);
 
 				const groupPosition = [columnIndex * (columnWidth + columnGap), y * (rowHeight + rowGap)];
 				const groupBoundingBox = {
@@ -320,13 +324,17 @@ export default class CallChainPage extends baseClass {
 			@mouseout=${toggleActiveClass}></polyline>`;
 		});
 
+		// calculate width/height
+		const height = (maxY + 1) * (rowHeight + rowGap)
+		const width = columnsArray.length * (columnWidth + columnGap);
+
 
 
 		return html`
 			<fx-page>
 				<h1 slot='title'>${name} Call Chain</h1>
-				<div id='call-chain-container'>
-					<svg class='call-chain' xmlns="http://www.w3.org/2000/svg">
+				<div id='call-chain-container' style='width: ${width}px' >
+					<svg class='call-chain' xmlns="http://www.w3.org/2000/svg" style='height: ${height}px'>
 					${columns}
 					${lines}
 					</svg>
