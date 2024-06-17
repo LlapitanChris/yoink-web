@@ -61,14 +61,7 @@ export default class ReferencePage extends baseClass {
 			} else {
 				headerHTML = html`<h1 slot='title'>References for ${this.uuid}</h1>`;
 			}
-			const referenceNodes = super.xpath(`//${this.type}[@UUID="${this.uuid}"]`, XPathResult.ORDERED_NODE_ITERATOR_TYPE);
-
-
-			// translate into array
-			let thisNode;
-			while (thisNode = referenceNodes.iterateNext()) {
-				references.push(thisNode);
-			}	
+			references = super.xpath(`//${this.type}[@UUID="${this.uuid}"]`, XPathResult.ORDERED_NODE_ITERATOR_TYPE, this.xmlDocument);
 
 		}
 

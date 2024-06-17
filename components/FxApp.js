@@ -14,6 +14,8 @@ import '../pages/ReferencePage.js';
 import '../pages/LayoutPage.js';
 import '../pages/DetailPage.js';
 import '../pages/CallChainPage.js';
+import '../pages/ExternalDataSourcePage.js';
+import '../pages/CustomFunctionPage.js';
 
 
 
@@ -36,7 +38,9 @@ export default class FxApp extends LitElement {
 			'/reference': 'fx-reference-page',
 			'/layout': 'layout-page',
 			'/detail': 'detail-page',
-			'/call-chain': 'call-chain-page'
+			'/call-chain': 'call-chain-page',
+			'/external-data-source': 'external-data-source-page',
+			'/custom-functions': 'custom-function-page',
 		}
 	}
 
@@ -45,7 +49,8 @@ export default class FxApp extends LitElement {
 			path: { type: String },
 			xmlDocument: { type: Object },
 			pathToXml: { type: String, reflect: true, attribute: 'path-to-xml' },
-			routes: { type: Object }
+			routes: { type: Object },
+			href: { type: String },
 		}
 
 	}
@@ -104,7 +109,12 @@ export default class FxApp extends LitElement {
 	// function to update the page
 	updatePage() {
 		const path = window.location.pathname;
+		// path w/ query string
+		const href = window.location.href;
+		// if the path is the same as the current path, return
+		if (href === this.href && path !== '/') return;
 		this.path = path;
+		this.href = href;
 		// get the component name
 		const componentName = this.routes?.[path] || '';
 		// get the component

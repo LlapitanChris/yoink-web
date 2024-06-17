@@ -2,6 +2,8 @@ import { LitElement, html, css } from 'https://cdn.skypack.dev/lit-element';
 
 import '../components/FxPage.js';
 import '../components/FxNodeDetail.js';
+import '../components/FxElementDetail.js';
+
 
 // import the mixin
 import { FxDataPageMixin } from '../mixins/FxDataPageMixin.js';
@@ -10,9 +12,6 @@ import { FxDataPageMixin } from '../mixins/FxDataPageMixin.js';
 const baseClass = FxDataPageMixin(LitElement);
 
 export default class DetailPage extends baseClass {
-	static get styles() {
-		return css``;
-	}
 
 	static get properties() {
 		return {
@@ -48,7 +47,7 @@ export default class DetailPage extends baseClass {
 		return html`
 			<fx-page>
 				<h1 slot='title'>${type} Detail</h1>
-				<fx-node-detail .node=${this.node}></fx-node-detail>
+				<fx-element-detail .node=${this.node} .xmlDocument=${this.xmlDocument}></fx-element-detail>
 			</fx-page>`
 	}
 

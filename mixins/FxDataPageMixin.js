@@ -1,20 +1,9 @@
 import '../components/FxPage.js';
 import { html } from 'https://cdn.skypack.dev/lit-element';
-import { classMap } from 'https://cdn.skypack.dev/lit-html/directives/class-map';	
 
-import { chunksToSkip, rootNodeNames } from '../constants.js';
+import { xpath } from '../utilities/xpath.js';
 
 export const FxDataPageMixin = (baseClass) => class extends baseClass { 
-	static chunksToSkip = [
-		'ObjectList', 'PartsList', 'JoinPredicateList', 'ParameterValues', 'StepsForScripts',
-		'ChunkList', 'Chunk', 'value', 'action', 'Conditions', 'JoinPredicate', 'TabPanel', 'ScriptTriggers', 'List',
-
-	]
-
-	static rootNodeNames = [
-		'AddAction',
-		'FMSaveAsXML',
-	]
 
 	static get properties() { 
 		return {
@@ -48,112 +37,36 @@ export const FxDataPageMixin = (baseClass) => class extends baseClass {
 		return parent.xmlDocument;
 	}
 
-
-	xpath(query, type) {
-		if (!this.xmlDocument) {
-			console.error(`no xml document to evaluate xpath query ${query}`);
-			return;
-		}
-		return this.xmlDocument.evaluate(query, this.xmlDocument, null, type, null);
+	xpath(xpathString, resultType = XPathResult.ORDERED_NODE_ITERATOR_TYPE, xmlDocument = this.xmlDocument) {
+		return xpath(xpathString, resultType, xmlDocument);
 	}
 
 	render() {
 		// get parameters from url
 		this.setPropsFromUrl();
+		if (!this.tableTemplate) {
+			console.error('no table template defined for this page');
+			return;
 
-		const classes = {
-			grid: this.display === 'grid',
-			flex: this.display === 'flex',
-			list: this.display === 'list'
-		}
+		} else if (!this.tableData) {
+			console.error('no table data defined for this page');
+			return;
 
-		// see if we've implemented the headerTemplate and elementsTemplate functions
-		if (!this.headerTemplate) {
-			console.error('headerTemplate function not implemented');
-		}
-		if (!this.elementsTemplate) {
-			console.error('elementsTemplate function not implemented');
+		} else if (!this.headerTemplate) { 
+			console.error('no header template defined for this page');
+			return;
+		
 		}
 
 		return html`
 			<fx-page>
-				${this.headerTemplate()}
-				<fx-element-list class="${classMap(classes)}">
-					${this.elementsTemplate()}
-				</fx-element-list>
+				${this.headerTemplate}
+				${this.tableTemplate(this.tableData)}
 			</fx-page>
 		`;
+
+
 	}
 
-	createComponentsFromXml(query, tagName) {
-		// create the components from the xml
-		const nodes = this.xpath(query, XPathResult.ORDERED_NODE_ITERATOR_TYPE);
-		let node = nodes.iterateNext();
-		const components = [];
-		while (node) {
-			// create the component
-			const component = document.createElement(tagName);
-			component.xmlNode = node;
-			component.xmlDocument = this.xmlDocument;
-			components.push(component);
-			node = nodes.iterateNext();
-		}
-		return components;
-	}
-
-	getElementAncestors(element) {
-
-		const exitWhen = rootNodeNames;
-		console.assert(element, 'no element provided to getElementAncestors');
-		console.assert(chunksToSkip, 'no chunksToSkip provided to getElementAncestors', super.chunksToSkip);
-		console.assert(exitWhen, 'no exitWhen provided to getElementAncestors');
-
-		const ancestors = [];
-
-		while (element) {
-
-			// exit if name is in exitWhen or name includes
-			// 'Catalog'
-			if (exitWhen.includes(element.nodeName) || element.nodeName.includes('Catalog')) {
-				break;
-			}
-
-			// skip if name is in chunksToSkip
-			if (chunksToSkip.includes(element.nodeName)) {
-				element = element.parentElement;
-				continue;
-			}
-			// skip if this node is the same name as the parent,
-			// the parent element is what we want.
-			if (element.nodeName == element.parentElement.nodeName) {
-				element = element.parentElement;
-				continue;
-			}
-			// specific to layoutObjects
-			// if the parent is a layoutObject and the element is the same type as the parent
-			// then the parent is what we want.
-			if (
-				element.parentElement.nodeName == 'LayoutObject' &&
-				element.nodeName == element.parentElement.getAttribute('type').replace(' ', '')
-			) {
-				element = element.parentElement;
-				continue;
-			}
-
-			// add the element to the ancestors array
-			ancestors.push(element);
-
-			// iterate to the next parent element
-			element = element.parentElement;
-
-		}
-
-		// if there are no ancestors, return nothing
-		if (ancestors.length <= 1) {
-			return nothing;
-		}
-
-		return ancestors;
-	}
 
 }
