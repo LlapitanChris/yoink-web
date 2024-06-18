@@ -37,12 +37,11 @@ export default class ExternalDataSourcePage extends baseClass {
 		// get the XML
 
 		const headerHTML = html`<h1 slot='title'>External Data Sources</h1>`;
-		const baseTableNodes = xpath('//ExternalDataSourceCatalog/ExternalDataSource', XPathResult.ORDERED_NODE_ITERATOR_TYPE, this.xmlDocument);
-		const baseTablesArray = xpathResultToArray(baseTableNodes);
+		const baseTableArray = super.xpath('//ExternalDataSourceCatalog/ExternalDataSource');
 		return html`
 			<fx-page>
 				${headerHTML}
-				${externalDataSourcesTable(baseTablesArray)}
+				${externalDataSourcesTable(baseTableArray)}
 			</fx-page>
 		`;
 

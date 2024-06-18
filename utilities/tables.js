@@ -1,4 +1,5 @@
 import { html } from 'https://cdn.skypack.dev/lit-element';
+import { xpath } from '../utilities/xpath.js';
 
 const refColWidth = '20px';
 const modCountWidth = '6ch';
@@ -75,6 +76,66 @@ export function fieldsTable(data) {
 }
 
 // Base Tables
+function baseTableColumnsTemplate() {
+	return html`
+				<tr>
+					<th></th>
+					<th>Name</th>
+					<th>Fields</th>
+					<th>Mod</th>
+					<th>Account</th>
+					<th>Timestamp</th>
+				</tr>
+			`;
+}
+
+function baseTableColumnGroupTemplate() { 
+	return html`
+				<colgroup>
+					<col style='width: ${refColWidth}'></col>
+					<col style='width: auto'></col>
+					<col style='width: ${modCountWidth}'></col>
+					<col style='width: ${modCountWidth}'></col>
+					<col style='width: ${uuidAccountNameWidth}'></col>
+					<col style='width: ${timestampWidth}'></col>
+				</colgroup>
+			`;
+
+}
+
+function baseTableRowTemplate(baseTable) { 
+	const uuidNode = baseTable.querySelector('UUID');
+	const uuid = uuidNode.textContent;
+	const document = baseTable.ownerDocument;
+
+	// get the field count
+	const fieldCount = xpath(`//FieldsForTables//BaseTableReference[@id="${baseTable.getAttribute('id')}"]/following-sibling::ObjectList/@membercount`, XPathResult.NUMBER_TYPE, document).numberValue;
+
+	return html`
+				<tr>
+					<td>
+						<fx-references-button .xmlNode=${baseTable}>R</fx-references-button>
+					</td>
+					<td><fx-a href=${`/detail?uuid=${uuid}`}>${baseTable.getAttribute('name')}</fx-a></td>
+					<td>${fieldCount}</td>
+					${renderUuidTds(uuidNode)}
+				</tr>
+			`;
+};
+
+export function baseTableTable(data) { 
+	return html`
+				<fx-data-table
+					.data=${data}
+					.columnsTemplate=${baseTableColumnsTemplate}
+					.rowTemplate=${baseTableRowTemplate}
+					.columnGroupTemplate=${baseTableColumnGroupTemplate}>
+				</fx-data-table>
+			`;
+
+}
+
+// Table Occurrences
 function occurrencesColumnsTemplate() {
 	return html`
 				<tr>
@@ -235,6 +296,56 @@ export function customFunctionsTable(data) {
 					.columnsTemplate=${customFunctionsColumnsTemplate}
 					.rowTemplate=${customFunctionsRowTemplate}
 					.columnGroupTemplate=${customFunctionsColumnGroupTemplate}>
+				</fx-data-table>
+			`;
+}
+
+// Value Lists
+function valueListColumnsTemplate() {
+	return html`
+				<tr>
+					<th></th>
+					<th>Name</th>
+					<th>Mod</th>
+					<th>Account</th>
+					<th>Timestamp</th>
+				</tr>
+			`;
+}
+
+function valueListColumnGroupTemplate() {
+	return html`
+				<colgroup>
+					<col style='width: ${refColWidth}'></col>
+					<col style='width: auto'></col>
+					<col style='width: ${modCountWidth}'></col>
+					<col style='width: ${uuidAccountNameWidth}'></col>
+					<col style='width: ${timestampWidth}'></col>
+				</colgroup>
+			`;
+}
+
+function valueListRowTemplate(valueList) {
+	const uuidNode = valueList.querySelector('UUID');
+	const uuid = uuidNode.textContent;
+	return html`
+				<tr>
+					<td>
+						<fx-references-button .xmlNode=${valueList}>R</fx-references-button>
+					</td>
+					<td><fx-a href=${`/detail?uuid=${uuid}`}>${valueList.getAttribute('name')}</fx-a></td>
+					${renderUuidTds(uuidNode)}
+				</tr>
+			`;
+}
+
+export function valueListTable(data) {
+	return html`
+				<fx-data-table
+					.data=${data}
+					.columnsTemplate=${valueListColumnsTemplate}
+					.rowTemplate=${valueListRowTemplate}
+					.columnGroupTemplate=${valueListColumnGroupTemplate}>
 				</fx-data-table>
 			`;
 }

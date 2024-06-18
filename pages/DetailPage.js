@@ -1,7 +1,6 @@
 import { LitElement, html, css } from 'https://cdn.skypack.dev/lit-element';
 
 import '../components/FxPage.js';
-import '../components/FxNodeDetail.js';
 import '../components/FxElementDetail.js';
 
 

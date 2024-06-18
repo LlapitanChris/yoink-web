@@ -1,7 +1,5 @@
 import { LitElement, html, css } from 'https://cdn.skypack.dev/lit-element';
 
-import './FxElementList.js';
-
 export default class FxPage extends LitElement { 
 	
 	static get properties() {

@@ -16,6 +16,7 @@ import '../pages/DetailPage.js';
 import '../pages/CallChainPage.js';
 import '../pages/ExternalDataSourcePage.js';
 import '../pages/CustomFunctionPage.js';
+import '../pages/TablePage.js';
 
 
 
@@ -28,7 +29,7 @@ export default class FxApp extends LitElement {
 			'/': 'fx-home-page',
 			'/index.html': 'fx-home-page',
 			'/about': 'fx-about-page',
-			'/base-table': 'fx-table-page',
+			'/base-table': 'table-page',
 			'/field': 'fx-field-page',
 			'/catalog': 'fx-catalog-page',
 			'/file-access': 'fx-file-access-page',
@@ -40,7 +41,8 @@ export default class FxApp extends LitElement {
 			'/detail': 'detail-page',
 			'/call-chain': 'call-chain-page',
 			'/external-data-source': 'external-data-source-page',
-			'/custom-functions': 'custom-function-page',
+			'/custom-functions': 'table-page',
+			'/value-list': 'table-page',
 		}
 	}
 

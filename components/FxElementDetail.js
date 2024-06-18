@@ -165,9 +165,9 @@ export default class FxElementDetail extends LitElement {
 
 	renderBaseTable() {
 		const resultType = XPathResult.ORDERED_NODE_ITERATOR_TYPE;
-		const fields = xpath(`//AddAction//FieldCatalog/BaseTableReference[@id='${this.fmId}']/following-sibling::ObjectList/Field`, resultType);
+		const fields = xpath(`//AddAction//FieldCatalog/BaseTableReference[@id='${this.fmId}']/following-sibling::ObjectList/Field`, resultType, this.xmlDocument);
 
-		const occurrences = xpath(`//TableOccurrenceCatalog//BaseTableSourceReference/BaseTableReference[@id='${this.fmId}']/ancestor::TableOccurrence`, resultType,);
+		const occurrences = xpath(`//TableOccurrenceCatalog//BaseTableSourceReference/BaseTableReference[@id='${this.fmId}']/ancestor::TableOccurrence`, resultType, this.xmlDocument);
 
 
 		return html`

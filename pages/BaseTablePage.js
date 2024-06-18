@@ -4,8 +4,6 @@ import { LitElement, html } from 'https://cdn.skypack.dev/lit-element';
 import { classMap } from 'https://cdn.skypack.dev/lit-html/directives/class-map';
 
 // import sub components
-import '../components/FxBaseTable.js';
-import '../components/FxElementList.js';
 import '../components/FxPage.js';
 import '../components/FxDataTable.js';
 import '../components/FxReferencesButton.js';

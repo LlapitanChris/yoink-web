@@ -1,7 +1,5 @@
 import { LitElement, html } from 'https://cdn.skypack.dev/lit-element';
-import { cache } from 'https://cdn.skypack.dev/lit-html/directives/cache.js';
 import { FxDataPageMixin } from "../mixins/FxDataPageMixin.js";
-import '../components/FxField.js';
 import '../components/FxDataTable.js';
 import '../components/FxReferencesButton.js';
 import '../components/FxNavButton.js';

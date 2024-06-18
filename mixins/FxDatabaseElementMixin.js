@@ -1,6 +1,5 @@
 
 import { html } from 'https://cdn.skypack.dev/lit-element';
-import '../components/FxModificationTag.js'
 
 export const FxDatabaseElementMixin = (superclass) => class extends superclass { 
 	constructor() {
