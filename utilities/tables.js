@@ -12,7 +12,7 @@ import '../components/FxNavButton.js';
 
 
 const refColWidth = '20px';
-const modCountWidth = '6ch';
+const modCountWidth = '8ch';
 const uuidAccountNameWidth = '10%';
 const timestampWidth = '10%';
 
@@ -444,6 +444,7 @@ function fileAccessColumnsTemplate() {
 					<th></th>
 					<th>Name</th>
 					<th>Id</th>
+					<th>Type</th>
 					<th>Added</th>
 					<th>By</th>
 					<th>Mod</th>
@@ -459,6 +460,7 @@ function fileAccessColumnGroupTemplate() {
 					<col style='width: ${refColWidth}'></col>
 					<col style='width: auto'></col>
 					<col style='width: ${modCountWidth}'></col>
+					<col style='width: 10ch'></col>
 					<col style='width: ${timestampWidth}'></col>
 					<col style='width: ${uuidAccountNameWidth}'></col>
 					<col style='width: ${modCountWidth}'></col>
@@ -470,6 +472,7 @@ function fileAccessColumnGroupTemplate() {
 
 function fileAccessRowTemplate(access) {
 	const id = access.getAttribute('id');
+	const type = access.getAttribute('type');
 	const uuid = access.querySelector('UUID').textContent;
 	const source = access.querySelector('Source');
 	const addedAt = source.getAttribute('CreationTimestamp');
@@ -480,6 +483,7 @@ function fileAccessRowTemplate(access) {
 					</td>
 					<td><fx-a href="/detail?uuid=${uuid}">${access.querySelector('Display').textContent}</fx-a></td>
 					<td><fx-a href="/detail?uuid=${uuid}">${id}</fx-a></td>
+					<td><fx-a href="/detail?uuid=${uuid}">${type}</fx-a></td>
 					<td>${new Date(addedAt).toLocaleString()}</td>
 					<td>${source.getAttribute('CreationAccountName')}</td>
 					${renderUuidTds(access.querySelector('UUID'))}
@@ -503,8 +507,8 @@ function relationshipColumnsTemplate() {
 	return html`
 				<tr>
 					<th></th>
-					<th>Left Table</th>
-					<th>Right Table</th>
+					<th>Left Table Occurrence</th>
+					<th>Right Table Occurrence</th>
 					<th>Id</th>
 					<th>Mod</th>
 					<th>Account</th>
@@ -531,15 +535,17 @@ function relationshipRowTemplate(relationship) {
 	const uuidNode = relationship.querySelector('UUID');
 	const uuid = uuidNode.textContent;
 	const leftTable = relationship.querySelector('LeftTable > TableOccurrenceReference').getAttribute('name');
+	const leftUuid = relationship.querySelector('LeftTable > TableOccurrenceReference').getAttribute('UUID');
 	const rightTable = relationship.querySelector('RightTable > TableOccurrenceReference').getAttribute('name');
+	const rightUuid = relationship.querySelector('RightTable > TableOccurrenceReference').getAttribute('UUID');
 
 	return html`
 				<tr>
 					<td>
 						<fx-references-button .xmlNode=${relationship}>R</fx-references-button>
 					</td>
-					<td><fx-a href=${`/detail?uuid=${uuid}`}>${leftTable}</fx-a></td>
-					<td><fx-a href=${`/detail?uuid=${uuid}`}>${rightTable}</fx-a></td>
+					<td><fx-a href=${`/detail?uuid=${leftUuid}`}>${leftTable}</fx-a></td>
+					<td><fx-a href=${`/detail?uuid=${rightUuid}`}>${rightTable}</fx-a></td>
 					<td><fx-a href=${`/detail?uuid=${uuid}`}>${relationship.id}</fx-a></td>
 					${renderUuidTds(uuidNode)}
 				</tr>

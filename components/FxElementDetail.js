@@ -1,7 +1,9 @@
 import { LitElement, html, css } from 'https://cdn.skypack.dev/lit-element';
 
 import './FxDataTable.js';
-import { fieldsTable, tableOccurrenceTable } from '../utilities/tables.js';
+import './FxAnchor.js';
+
+import * as tables from '../utilities/tables.js';
 import { xpath, xpathResultToArray } from '../utilities/xpath.js';
 
 export default class FxElementDetail extends LitElement {
@@ -41,7 +43,7 @@ export default class FxElementDetail extends LitElement {
 			margin-top: 1em;
 		}
 
-		.content-block > label {
+		.content-block label {
 			display: block;
 		}
 
@@ -64,7 +66,8 @@ export default class FxElementDetail extends LitElement {
 		section.content-block {
 			padding-top: 1em;
 			position: relative;
-
+			display: flex;
+			flex-direction: column;
 		}
 
 		h2.section-title {
@@ -85,6 +88,24 @@ export default class FxElementDetail extends LitElement {
 			position: sticky;
 			bottom: 0;
 			background-color: white;
+		}
+
+		.flex-row {
+			display: flex;
+			flex-direction: row;
+			gap: 1rem;
+		}
+
+		.flex-column {
+			display: flex;
+			flex-direction: column;
+			gap: 1rem;
+		}
+
+		.rounded {
+			border-radius: 5px;
+			border: 1px solid #ccc;
+			padding: 1rem;
 		}
 
 		`;
@@ -163,10 +184,10 @@ export default class FxElementDetail extends LitElement {
 		`;
 	}
 
+	// Base Table
 	renderBaseTable() {
 		const resultType = XPathResult.ORDERED_NODE_ITERATOR_TYPE;
 		const fields = xpath(`//AddAction//FieldCatalog/BaseTableReference[@UUID='${this.uuid}']/following-sibling::ObjectList/Field`, resultType, this.xmlDocument);
-
 		const occurrences = xpath(`//TableOccurrenceCatalog//BaseTableSourceReference/BaseTableReference[@UUID='${this.uuid}']/ancestor::TableOccurrence`, resultType, this.xmlDocument);
 
 
@@ -180,13 +201,85 @@ export default class FxElementDetail extends LitElement {
 			</section>
 			<section class='content-block'>
 				<h2 id='fields' class='section-title'>Fields: <span>${fields.length}</span></h2>
-				${fieldsTable(fields)}
+				${tables.fieldsTable(fields)}
 			</section>
 			<section id='occurrences' class='content-block'>
 				<h2 class='section-title'>Occurrences: <span>${occurrences.length}</span></h2>
-				${tableOccurrenceTable(occurrences)}
+				${tables.tableOccurrenceTable(occurrences)}
 			</section>
 		`;
+
+	}
+
+	// Table Occurrence
+	renderTableOccurrence() {
+		const resultType = XPathResult.ORDERED_NODE_ITERATOR_TYPE;
+		const baseTableUuid = this.node.querySelector('BaseTableReference').getAttribute('UUID');
+		const baseTableName = this.node.querySelector('BaseTableReference').getAttribute('name');
+		const relationships = xpath(`//AddAction/RelationshipCatalog/Relationship//TableOccurrenceReference[@UUID='${this.uuid}']/ancestor::Relationship`, resultType, this.xmlDocument);
+
+		return html`
+			<section class='content-block'>
+				<h2 class='section-title'>Info</h2>
+				<label>Type: <span>${this.type}</span></label>
+				<label>Name: <span>${this.name}</span></label>
+				<label>Base Table: <fx-a href=${`/detail?uuid=${baseTableUuid}`}><span>${baseTableName}</span></fx-a></label>
+				<label>Relationships: <span>${relationships.length}</span></label>
+			</section>
+			<section class='content-block'>
+			<h2 id='relationships' class='section-title'>Relationships: <span>${relationships.length}</span></h2>
+				${tables.relationshipTable(relationships)}
+			</section>
+		`;
+	}
+
+	// Relationship
+	renderRelationship() {
+		const leftTable = this.node.querySelector('LeftTable')
+		const rightTable = this.node.querySelector('RightTable')
+		const predicates = this.node.querySelectorAll('JoinPredicateList > JoinPredicate');
+
+		const makeTableDiv = (table, side) => {
+			const cascadeCreate = table.getAttribute('cascadeCreate');
+			const cascadeDelete = table.getAttribute('cascadeDelete');
+			const type = table.getAttribute('type');
+
+			const ref = table.querySelector('TableOccurrenceReference');
+			const name = ref.getAttribute('name');
+			const uuid = ref.getAttribute('UUID');
+			const id = ref.id
+
+			return html`
+				<div class='rounded'>
+					<h3>${side} Table Occurrence</h3>
+					<label>Name: <fx-a href=${`/detail?uuid=${uuid}`}><span>${name}</span></fx-a></label>
+					<label>Id: <fx-a href=${`/detail?uuid=${uuid}`}><span>${id}</span></fx-a></label>
+					<label>Type: <span>${type}</span></label>
+					<label>Create: <span>${cascadeCreate}</span></label>
+					<label>Delete: <span>${cascadeDelete}</span></label>
+				</div>
+			`;
+		}
+
+		return html`
+			<section class='content-block'>
+				<h2 class='section-title'>Info</h2>
+				<label>Type: <span>${this.type}</span></label>
+				<label>Name: <span>${this.name}</span></label>
+				<label>Predicates: <span>${predicates.length}</span></label>
+			</section>
+			<section class='content-block'>
+				<h2 class='section-title'>Tables</h2>
+				<div class='flex-row'>
+					${makeTableDiv(leftTable, 'Left')}
+					${makeTableDiv(rightTable, 'Right')}
+				</div>
+			</section>
+			<section class='content-block'>
+				<h2 class='section-title'>Predicates</h2>
+			</section>
+		`;
+
 
 	}
 

@@ -38,6 +38,7 @@ export const FxDataPageMixin = (baseClass) => class extends baseClass {
 	}
 
 	xpath(xpathString, resultType = XPathResult.ORDERED_NODE_ITERATOR_TYPE, xmlDocument = this.xmlDocument) {
+		console.assert(xmlDocument, 'no xmlDocument found')
 		return xpath(xpathString, resultType, xmlDocument);
 	}
 

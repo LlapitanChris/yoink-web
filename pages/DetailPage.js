@@ -27,7 +27,7 @@ export default class DetailPage extends baseClass {
 
 	get xpathString() {
 		if (this.uuid) {
-			return `//UUID[text()="${this.uuid}"]/..`;
+			return `//AddAction//UUID[text()="${this.uuid}"]/..`;
 		}
 	}
 
