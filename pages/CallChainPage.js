@@ -67,45 +67,44 @@ export default class CallChainPage extends baseClass {
 			const resultType = XPathResult.ORDERED_NODE_ITERATOR_TYPE;
 
 			// find all the times this script is referenced
-			const callingElements = super.xpath(`//AddAction//ScriptReference[@UUID='${uuid}']`, resultType);
+			const callingElementsResultsArray = super.xpath(`//AddAction//ScriptReference[@UUID='${uuid}']`, resultType);
 			const callingElementsArray = [];
-			let element = callingElements.iterateNext();
 
-			while (element) {
+			callingElementsResultsArray.forEach((element) => {
 				try {
 					// get the nearest ancestor that is a LayoutObject or a Script
 					const ancestor = element.closest('LayoutObject') ||
 						element.closest('Script')?.querySelector('ScriptReference') ||
 						element.closest('ScriptTrigger') ||
 						element.closest('Layout');
+
 					const thisUuid = ancestor.getAttribute('UUID') ||
 						ancestor.querySelector(':scope > UUID')?.textContent ||
 						ancestor.querySelector(':scope > ScriptReference').getAttribute('UUID');
+
 					console.assert(thisUuid, 'No UUID found on ancestor');
 
 					// don't push sequential duplicates
 					if (uuid !== thisUuid) callingElementsArray.push(ancestor);
-					element = callingElements.iterateNext();
+
 				} catch (error) {
 					console.error('Error getting ancestor', error, element);
-					debugger
-					element = callingElements.iterateNext();
 				}
-			}
+			});
 
 			// find all the times this script calls another script
+			const calledScriptsResultsArray = super.xpath(`//AddAction/StepsForScripts/Script/ScriptReference[@UUID="${uuid}"]/..//ScriptReference`, resultType);
 			const calledScriptsArray = [];
-			const calledScripts = super.xpath(`//AddAction/StepsForScripts/Script/ScriptReference[@UUID="${uuid}"]/..//ScriptReference`, resultType);
+			calledScriptsResultsArray.forEach((script) => {
 
-			let script = calledScripts.iterateNext();
-			while (script) {
 				const thisUuid = script.getAttribute('UUID') ||
 					script.querySelector(':scope > UUID')?.textContent ||
 					script.querySelector(':scope > ScriptReference')?.getAttribute('UUID');
+				
 				console.assert(thisUuid, 'No UUID found on script');
+
 				if (uuid !== thisUuid) calledScriptsArray.push(script);
-				script = calledScripts.iterateNext();
-			}
+			});
 
 			// if the map doesn't have the x (column), add it
 			if (!map.has(x)) map.set(x, new Map());
