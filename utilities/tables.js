@@ -1,10 +1,15 @@
+// LitElement
 import { html } from 'https://cdn.skypack.dev/lit-element';
 
+// utilities
 import { xpath } from '../utilities/xpath.js';
 
+// components
 import '../components/FxReferencesButton.js';
 import '../components/FxDataTable.js';
 import '../components/FxAnchor.js';
+import '../components/FxNavButton.js';
+
 
 const refColWidth = '20px';
 const modCountWidth = '6ch';
@@ -693,7 +698,7 @@ function scriptColumnsTemplate() {
 function scriptColumnGroupTemplate() {
 	return html`
 				<colgroup>
-					<col style='width: ${refColWidth}'></col>
+					<col style='width: 55px'></col>
 					<col style='width: auto'></col>
 					<col style='width: 6ch'></col>
 					<col style='width: 10ch'></col>
@@ -717,6 +722,7 @@ function scriptRowTemplate(script) {
 				<tr>
 					<td>
 						<fx-references-button .xmlNode=${script}>R</fx-references-button>
+						<fx-nav-button href='call-chain?uuid=${uuid}'>CC</fx-nav-button>
 					</td>
 					<td><fx-a href=${`/script-step?scriptId=${script.id}`}>${name}</fx-a></td>
 					<td><fx-a href=${`/script-step?scriptId=${script.id}`}>${script.id}</fx-a></td>
@@ -808,7 +814,6 @@ export function accountsTable(data) {
 }
 
 
-
 // Default
 function defaultColumnsTemplate() {
 	return html`
@@ -861,3 +866,4 @@ export function defaultTable(data) {
 				</fx-data-table>
 			`;
 }
+
