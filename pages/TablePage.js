@@ -1,6 +1,7 @@
 import { LitElement, html } from 'https://cdn.skypack.dev/lit-element';
 import { xpath, xpathResultToArray } from '../utilities/xpath.js';
 import * as table from '../utilities/tables.js';
+import { camelCaseFromKebab, pascalCaseFromKebab, kebabToProperName } from '../utilities/text.js';
 
 
 // import the mixin
@@ -12,22 +13,30 @@ const baseClass = FxDataPageMixin(LitElement);
 export default class TablePage extends baseClass {
 
 	static config = {
-		'/catalogs': {
-			title: 'Catalogs',
+		'/catalog': {
+			title: 'All Catalogs',
 			xpath: `//AddAction/*[substring(name(), string-length(name()) - string-length('Catalog') +1) = 'Catalog']`,
-		},
-		'/value-list': {
-			title: 'Value Lists',
-			xpath: `//AddAction//ValueListCatalog/ValueList`,
 		},
 		'/custom-functions': {
 			title: 'Custom Functions',
 			xpath: `//AddAction/CustomFunctionsCatalog/ObjectList/CustomFunction`,
 		},
-		'/base-table': {
-			title: 'Base Tables',
-			xpath: `//AddAction/BaseTableCatalog/BaseTable`,
+		'/file-access': {
+			title: 'File Accesses',
+			xpath: `//AddAction//FileAccessCatalog/ObjectList/Authorization`,
 		},
+		'/privilege-sets': {
+			title: 'Privilege Sets',
+			xpath: `//AddAction//PrivilegeSetsCatalog/ObjectList/PrivilegeSet`,
+		},
+		'/extended-privileges': {
+			title: 'Extended Privileges',
+			xpath: `//AddAction//ExtendedPrivilegesCatalog/ObjectList/ExtendedPrivilege`,
+		},
+		'/accounts': {
+			title: 'Accounts',
+			xpath: `//AddAction//AccountsCatalog/ObjectList/Account`,
+		}
 	}
 
 
@@ -36,22 +45,23 @@ export default class TablePage extends baseClass {
 		// get url path
 		const path = window.location.pathname;
 
+		// convert the path to camel case, with the first letter lowercase
+		// don't include the first slash
+		const camelCasePath = camelCaseFromKebab(path.replace('/', ''));
+		const pascalCasePath = pascalCaseFromKebab(path.replace('/', ''));
+		const properName = kebabToProperName(path.replace('/', ''));
+
 		// get config data for the path
-		const xpath = TablePage.config[path].xpath;
-		const title = TablePage.config[path].title;
+		const xpath = TablePage.config[path]?.xpath || `//AddAction//${pascalCasePath}Catalog/${pascalCasePath}`;
+		const title = TablePage.config[path]?.title || properName;
 		const data = super.xpath(xpath, XPathResult.ORDERED_NODE_ITERATOR_TYPE);
 
-		// convert the path to camel case, with the first letter lowercase
-		const camelCasePath = path.replace('/', '').split('-').reduce((acc, part, index) => {
-			if (index === 0) {
-				return part.toLowerCase();
-			} else {
-				return acc + part[0].toUpperCase() + part.slice(1);
-			}
-		});
+		console.assert(data, 'No data found for path', path, 'with xpath', xpath);
+		console.assert(data.length, 'No data found for path', path, 'with xpath', xpath);
 
 		const importName = `${camelCasePath}Table`;
-		const tableTemplate = table[importName];
+		const tableTemplate = table[importName] || table['defaultTable'];
+
 		const boundTemplate = tableTemplate.bind(this);
 
 		if (!tableTemplate) {

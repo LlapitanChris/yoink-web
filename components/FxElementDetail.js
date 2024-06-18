@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'https://cdn.skypack.dev/lit-element';
 
 import './FxDataTable.js';
-import { fieldsTable, occurrencesTable } from '../utilities/tables.js';
+import { fieldsTable, tableOccurrenceTable } from '../utilities/tables.js';
 import { xpath, xpathResultToArray } from '../utilities/xpath.js';
 
 export default class FxElementDetail extends LitElement {
@@ -184,7 +184,7 @@ export default class FxElementDetail extends LitElement {
 			</section>
 			<section id='occurrences' class='content-block'>
 				<h2 class='section-title'>Occurrences: <span>${occurrences.length}</span></h2>
-				${occurrencesTable(occurrences)}
+				${tableOccurrenceTable(occurrences)}
 			</section>
 		`;
 

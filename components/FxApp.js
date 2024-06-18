@@ -3,19 +3,10 @@ import { LitElement, html } from 'https://cdn.skypack.dev/lit-element';
 
 import '../pages/HomePage.js';
 import '../pages/AboutPage.js';
-import '../pages/BaseTablePage.js';
-import '../pages/FieldsPage.js';
-import '../pages/CatalogPage.js';
-import '../pages/FileAccessPage.js';
-import '../pages/TableOccurrencePage.js';
-import '../pages/ScriptPage.js';
 import '../pages/ScriptStepPage.js';
 import '../pages/ReferencePage.js';
-import '../pages/LayoutPage.js';
 import '../pages/DetailPage.js';
 import '../pages/CallChainPage.js';
-import '../pages/ExternalDataSourcePage.js';
-import '../pages/CustomFunctionPage.js';
 import '../pages/TablePage.js';
 
 
@@ -25,24 +16,15 @@ export default class FxApp extends LitElement {
 		super();
 		this.path = window.location.pathname;
 		// route object to map the path to the NAME of the component
+		// the DEFAULT component is the table-page
 		this.routes = {
 			'/': 'fx-home-page',
 			'/index.html': 'fx-home-page',
 			'/about': 'fx-about-page',
-			'/base-table': 'table-page',
-			'/field': 'fx-field-page',
-			'/catalog': 'fx-catalog-page',
-			'/file-access': 'fx-file-access-page',
-			'/table-occurrence': 'fx-table-occurrence-page',
-			'/script': 'fx-script-page',
 			'/script-step': 'fx-script-step-page',
 			'/reference': 'fx-reference-page',
-			'/layout': 'layout-page',
 			'/detail': 'detail-page',
 			'/call-chain': 'call-chain-page',
-			'/external-data-source': 'external-data-source-page',
-			'/custom-functions': 'table-page',
-			'/value-list': 'table-page',
 		}
 	}
 
@@ -118,9 +100,9 @@ export default class FxApp extends LitElement {
 		this.path = path;
 		this.href = href;
 		// get the component name
-		const componentName = this.routes?.[path] || '';
+		const componentName = this.routes?.[path] || 'table-page';
 		// get the component
-		const component = componentName ? customElements.get(componentName): null;
+		const component = customElements.get(componentName)
 
 		if (!component) {
 			console.error(`Component ${componentName} not found for path ${path}`);
