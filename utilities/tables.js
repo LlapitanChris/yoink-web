@@ -196,13 +196,14 @@ function occurrencesRowTemplate(occurrence) {
 	const g = color.getAttribute('green');
 	const b = color.getAttribute('blue');
 	const table = occurrence.querySelector('BaseTableReference').getAttribute('name');
+	const tableUuid = occurrence.querySelector('BaseTableReference').getAttribute('UUID');
 	return html`
 				<tr>
 					<td>
 						<fx-references-button .xmlNode=${occurrence}>R</fx-references-button>
 					</td>
 					<td><fx-a href=${`/detail?uuid=${uuid}`}>${occurrence.getAttribute('name')}</fx-a></td>
-					<td><fx-a href=${`/detail?uuid=${uuid}`}>${table}</fx-a></td>
+					<td><fx-a href=${`/detail?uuid=${tableUuid}`}>${table}</fx-a></td>
 					<td><fx-a href=${`/detail?uuid=${uuid}`}>${occurrence.id}</fx-a></td>
 					<td><div style='background-color: rgb(${r},${g},${b}); width: 1rem; height: 1rem; border-radius: 50%;'></div></td>
 					<td>[${coordRect.getAttribute('top')}, ${coordRect.getAttribute('left')}]</td>
@@ -842,7 +843,7 @@ function defaultColumnGroupTemplate() {
 }
 
 function defaultRowTemplate(item) {
-	const uuidNode = item.querySelector('UUID');
+	const uuidNode = item.querySelector(':scope > UUID');
 	const uuid = uuidNode?.textContent;
 	return html`
 				<tr>
