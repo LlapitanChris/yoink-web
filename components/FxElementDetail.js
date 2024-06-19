@@ -108,6 +108,11 @@ export default class FxElementDetail extends LitElement {
 			padding: 1rem;
 		}
 
+		fx-a {
+			padding: 0;
+			margin: 0;
+		}
+
 		`;
 	}
 
@@ -277,12 +282,56 @@ export default class FxElementDetail extends LitElement {
 			</section>
 			<section class='content-block'>
 				<h2 class='section-title'>Predicates</h2>
+				${tables.joinPredicateTable(predicates)}
 			</section>
 		`;
 
 
 	}
 
+
+	// Value List
+	renderValueList() {
+		const resultType = XPathResult.ORDERED_NODE_ITERATOR_TYPE;
+		const type = this.node.querySelector('Source').getAttribute('type');
+		const name = this.node.getAttribute('name');
+
+		const options = xpath(`//AddAction//OptionsForValueLists/ValueList[ValueListReference[@UUID='${this.uuid}']]`, resultType, this.xmlDocument);
+		console.log(options);
+		console.assert(options, `No options found for Value List ${this.uuid}`);
+		const primaryField = options[0].querySelector('PrimaryField > FieldReference');
+		const secondaryField = options[0].querySelector('SecondaryField > FieldReference');
+		const customValues = options[0].querySelector('CustomValues > Text')?.textContent;
+
+		const renderField = (fieldRef) => {
+			// field info
+			const name = fieldRef.getAttribute('name');
+			const uuid = fieldRef.getAttribute('UUID');
+			const id = fieldRef.id;
+
+			// table info
+			const tableRef = fieldRef.querySelector('TableOccurrenceReference');
+			const tableName = tableRef.getAttribute('name');
+			const tableUuid = tableRef.getAttribute('UUID');
+			const tableId = tableRef.id;
+
+			return html`
+				<fx-a href=${`/detail?uuid=${tableUuid}`}>${tableName}</fx-a><span>::</span><fx-a href=${`/detail?uuid=${uuid}`}>${name}</fx-a>
+			`;
+		}
+
+		return html`
+			<section class='content-block'>
+				<h2 class='section-title'>Info</h2>
+				<label>Type: <span>${type}</span></label>
+				<label>Name: <span>${name}</span></label>
+				${primaryField ? html`<label>Primary Field: ${renderField(primaryField)}</label>` : ''}
+				${secondaryField ? html`<label>Secondary Field: ${renderField(secondaryField)}</label>` : ''}
+				${customValues ? html`<label>Custom Values: <div style='white-space: pre; padding-top: .5rem;'>${customValues}</div></label>` : ''}
+			</section>
+		`;
+
+	}
 }
 
 

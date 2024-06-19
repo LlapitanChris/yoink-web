@@ -1,5 +1,5 @@
 // LitElement
-import { html } from 'https://cdn.skypack.dev/lit-element';
+import { html, nothing } from 'https://cdn.skypack.dev/lit-element';
 
 // utilities
 import { xpath } from '../utilities/xpath.js';
@@ -124,7 +124,8 @@ function baseTableRowTemplate(baseTable) {
 	const document = baseTable.ownerDocument;
 
 	// get the field count
-	const fieldCount = xpath(`//FieldsForTables//BaseTableReference[@id="${baseTable.getAttribute('id')}"]/following-sibling::ObjectList/@membercount`, XPathResult.NUMBER_TYPE, document).numberValue;
+	// const fieldCount = xpath(`//FieldsForTables//BaseTableReference[@id="${baseTable.getAttribute('id')}"]/following-sibling::ObjectList/@membercount`, XPathResult.NUMBER_TYPE, document).numberValue;
+	const fieldCount = document.querySelector(`FieldsForTables > FieldCatalog > BaseTableReference[UUID="${uuid}"] + ObjectList`)?.getAttribute('membercount')
 
 	return html`
 				<tr>
@@ -337,6 +338,7 @@ function valueListColumnsTemplate() {
 					<th></th>
 					<th>Name</th>
 					<th>Id</th>
+					<th>Type</th>
 					<th>Mod</th>
 					<th>Account</th>
 					<th>Timestamp</th>
@@ -350,6 +352,7 @@ function valueListColumnGroupTemplate() {
 					<col style='width: ${refColWidth}'></col>
 					<col style='width: auto'></col>
 					<col style='width: ${modCountWidth}'></col>
+					<col style='width: 20ch'></col>
 					<col style='width: ${modCountWidth}'></col>
 					<col style='width: ${uuidAccountNameWidth}'></col>
 					<col style='width: ${timestampWidth}'></col>
@@ -360,6 +363,7 @@ function valueListColumnGroupTemplate() {
 function valueListRowTemplate(valueList) {
 	const uuidNode = valueList.querySelector('UUID');
 	const uuid = uuidNode.textContent;
+	const type = valueList.querySelector('Source').getAttribute('value');
 	return html`
 				<tr>
 					<td>
@@ -367,6 +371,7 @@ function valueListRowTemplate(valueList) {
 					</td>
 					<td><fx-a href=${`/detail?uuid=${uuid}`}>${valueList.getAttribute('name')}</fx-a></td>
 					<td><fx-a href=${`/detail?uuid=${uuid}`}>${valueList.id}</fx-a></td>
+					<td><fx-a href=${`/detail?uuid=${uuid}`}>${type}</fx-a></td>
 					${renderUuidTds(uuidNode)}
 				</tr>
 			`;
@@ -510,6 +515,7 @@ function relationshipColumnsTemplate() {
 					<th>Left Table Occurrence</th>
 					<th>Right Table Occurrence</th>
 					<th>Id</th>
+					<th>Predicate Count</th>
 					<th>Mod</th>
 					<th>Account</th>
 					<th>Timestamp</th>
@@ -525,6 +531,7 @@ function relationshipColumnGroupTemplate() {
 					<col style='width: auto'></col>
 					<col style='width: ${modCountWidth}'></col>
 					<col style='width: ${modCountWidth}'></col>
+					<col style='width: ${modCountWidth}'></col>
 					<col style='width: ${uuidAccountNameWidth}'></col>
 					<col style='width: ${timestampWidth}'></col>
 				</colgroup>
@@ -538,6 +545,7 @@ function relationshipRowTemplate(relationship) {
 	const leftUuid = relationship.querySelector('LeftTable > TableOccurrenceReference').getAttribute('UUID');
 	const rightTable = relationship.querySelector('RightTable > TableOccurrenceReference').getAttribute('name');
 	const rightUuid = relationship.querySelector('RightTable > TableOccurrenceReference').getAttribute('UUID');
+	const predicateCount = relationship.querySelector(':scope > JoinPredicateList')?.getAttribute('membercount') || 0;
 
 	return html`
 				<tr>
@@ -547,6 +555,7 @@ function relationshipRowTemplate(relationship) {
 					<td><fx-a href=${`/detail?uuid=${leftUuid}`}>${leftTable}</fx-a></td>
 					<td><fx-a href=${`/detail?uuid=${rightUuid}`}>${rightTable}</fx-a></td>
 					<td><fx-a href=${`/detail?uuid=${uuid}`}>${relationship.id}</fx-a></td>
+					<td><fx-a href=${`/detail?uuid=${uuid}`}>${predicateCount}</fx-a></td>
 					${renderUuidTds(uuidNode)}
 				</tr>
 			`;
@@ -874,3 +883,143 @@ export function defaultTable(data) {
 			`;
 }
 
+
+// Join Predicates
+function joinPredicateColumnsTemplate() {
+	return html`
+				<tr>
+					<th>Left Table</th>
+					<th>Left Field</th>
+					<th>Operator</th>
+					<th>Right Table</th>
+					<th>Right Field</th>
+				</tr>
+			`;
+}
+
+function joinPredicateColumnGroupTemplate() {
+	return html`
+				<colgroup>
+					<col style='width: 20%'></col>
+					<col style='width: 20%'></col>
+					<col style='width: 10%'></col>
+					<col style='width: 20%'></col>
+					<col style='width: 20%'></col>
+				</colgroup>
+			`;
+}
+
+function joinPredicateRowTemplate(predicate) {
+	const leftTable = predicate.querySelector('LeftField TableOccurrenceReference');
+	const leftTableUuid = leftTable.getAttribute('UUID');
+	const leftField = predicate.querySelector('LeftField FieldReference');
+	const leftFieldUuid = leftField.getAttribute('UUID');
+	const type = predicate.getAttribute('type');
+	const operator = type === 'Equal' ? '=' : type === 'LessOrEqual' ? '<=' : type === 'GreaterOrEqual' ? '>=' : type === 'NotEqual' ? '!=' : type === 'Less' ? '<' : type === 'CartesianProduct' ? 'x' : type === 'Greater' ? '>' : '';
+	const rightTable = predicate.querySelector('RightField TableOccurrenceReference');
+	const rightTableUuid = rightTable.getAttribute('UUID');
+	const rightField = predicate.querySelector('RightField FieldReference');
+	const rightFieldUuid = rightField.getAttribute('UUID');
+
+	return html`
+				<tr>
+					<td><fx-a href=${`/detail?uuid=${leftTableUuid}`}>${leftTable.getAttribute('name')}</fx-a></td>
+					<td><fx-a href=${`/detail?uuid=${leftFieldUuid}`}>${leftField.getAttribute('name')}</fx-a></td>
+					<td>${operator}</td>
+					<td><fx-a href=${`/detail?uuid=${rightTableUuid}`}>${rightTable.getAttribute('name')}</fx-a></td>
+					<td><fx-a href=${`/detail?uuid=${rightFieldUuid}`}>${rightField.getAttribute('name')}</fx-a></td>
+				</tr>
+			`;
+}
+
+export function joinPredicateTable(data) {
+	return html`
+				<fx-data-table
+					.data=${data}
+					.columnsTemplate=${joinPredicateColumnsTemplate}
+					.rowTemplate=${joinPredicateRowTemplate}
+					.columnGroupTemplate=${joinPredicateColumnGroupTemplate}>
+				</fx-data-table>
+			`;
+}
+
+// Layout
+function layoutColumnsTemplate() {
+	return html`
+				<tr>
+					<th></th>
+					<th>Name</th>
+					<th>Id</th>
+					<th>Table</th>
+					<th>Theme</th>
+					<th>Hidden</th>
+					<th>Menu</th>
+					<th>Width</th>
+					<th>Mod</th>
+					<th>Account</th>
+					<th>Timestamp</th>
+				</tr>
+			`;
+}
+
+function layoutColumnGroupTemplate() {
+	return html`
+				<colgroup>
+					<col style='width: ${refColWidth}'></col>
+					<col style='width: auto'></col>
+					<col style='width: 6ch'></col>
+					<col style='width: 20ch'></col>
+					<col style='width: 20ch'></col>
+					<col style='width: 4ch'></col>
+					<col style='width: 20ch'></col>
+					<col style='width: 10ch'></col>
+					<col style='width: ${modCountWidth}'></col>
+					<col style='width: ${uuidAccountNameWidth}'></col>
+					<col style='width: ${timestampWidth}'></col>
+				</colgroup>
+			`;
+}
+
+function layoutRowTemplate(layout) {
+	const uuidNode = layout.querySelector(':scope > UUID');
+	const uuid = uuidNode.textContent;
+	const table = layout.querySelector(':scope > TableOccurrenceReference');
+	const tableUuid = table?.getAttribute('UUID') || '';
+	const theme = layout.querySelector(':scope > LayoutThemeReference');
+	const themeName = theme?.getAttribute('name') || '';
+	const hidden = layout.querySelector(':scope > Options').getAttribute('hidden') == 'True' ? 'Yes' : 'No'
+	const menu = layout.querySelector(':scope > MenuSet > CustomMenuSetReference');
+	const menuUuid = menu?.getAttribute('UUID') || '';
+	const menuName = menu?.getAttribute('name') || '';
+	const width = layout.getAttribute('width');
+	const isFolder = layout.getAttribute('isFolder') == "True" ? true : false;
+	const isMarker = layout.getAttribute('isFolder') == "marker" ? true : false;
+
+
+	return html`
+				<tr>
+					<td>
+						<fx-references-button .xmlNode=${layout}>R</fx-references-button>
+					</td>
+					<td><fx-a href=${`/detail?uuid=${uuid}`}>${layout.getAttribute('name') || ''} ${isFolder || isMarker ? `(${isFolder ? 'Folder' : isMarker ? 'Marker' : ''})` : ''}</fx-a></td>
+					<td><fx-a href=${`/detail?uuid=${uuid}`}>${layout.id}</fx-a></td>
+					<td><fx-a href=${`/detail?uuid=${tableUuid}`}>${table?.getAttribute('name') || 'n/a'}</fx-a></td>
+					<td title=${themeName}><fx-a href=${`/detail?uuid=${theme?.getAttribute('UUID') || ''}`}>${themeName}</fx-a></td>
+					<td>${hidden}</td>
+					<td title=${menuName}>${menuUuid ? html`<fx-a href=${`/detail?uuid=${menuUuid}`}>${menuName}</fx-a>` : menuName}</td>
+					<td>${width}px</td>
+					${renderUuidTds(uuidNode)}
+				</tr>
+			`;
+}
+
+export function layoutTable(data) {
+	return html`
+				<fx-data-table
+					.data=${data}
+					.columnsTemplate=${layoutColumnsTemplate}
+					.rowTemplate=${layoutRowTemplate}
+					.columnGroupTemplate=${layoutColumnGroupTemplate}>
+				</fx-data-table>
+			`;
+}

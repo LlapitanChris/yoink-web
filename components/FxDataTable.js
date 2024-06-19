@@ -74,8 +74,11 @@ export default class FxDataTable extends LitElement {
 			}
 		} else if (value.constructor.name === 'Array') {
 			data = value;
+		} else if (value.constructor.name === 'NodeList') {
+			// handle nodelist
+			data = Array.from(value);
 		} else {
-			throw new Error('Data must be an array or XPathResult');
+			throw new Error(`Data must be an array or XPathResult. Received ${value.constructor.name}`);
 		}
 
 		this._data = data;

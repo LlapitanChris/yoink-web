@@ -18,23 +18,23 @@ export default class TablePage extends baseClass {
 			xpath: `//AddAction/*[substring(name(), string-length(name()) - string-length('Catalog') +1) = 'Catalog']`,
 		},
 		'/custom-functions': {
-			title: 'Custom Functions',
+			title: 'Custom Function List',
 			xpath: `//AddAction/CustomFunctionsCatalog/ObjectList/CustomFunction`,
 		},
 		'/file-access': {
-			title: 'File Accesses',
+			title: 'File Access List',
 			xpath: `//AddAction//FileAccessCatalog/ObjectList/Authorization`,
 		},
 		'/privilege-sets': {
-			title: 'Privilege Sets',
+			title: 'Privilege Set List',
 			xpath: `//AddAction//PrivilegeSetsCatalog/ObjectList/PrivilegeSet`,
 		},
 		'/extended-privileges': {
-			title: 'Extended Privileges',
+			title: 'Extended Privilege List',
 			xpath: `//AddAction//ExtendedPrivilegesCatalog/ObjectList/ExtendedPrivilege`,
 		},
 		'/accounts': {
-			title: 'Accounts',
+			title: 'Account List',
 			xpath: `//AddAction//AccountsCatalog/ObjectList/Account`,
 		}
 	}
@@ -53,7 +53,7 @@ export default class TablePage extends baseClass {
 
 		// get config data for the path
 		const xpath = TablePage.config[path]?.xpath || `//AddAction//${pascalCasePath}Catalog/${pascalCasePath}`;
-		const title = TablePage.config[path]?.title || properName;
+		const title = TablePage.config[path]?.title || properName + ' List';
 		const data = super.xpath(xpath, XPathResult.ORDERED_NODE_ITERATOR_TYPE);
 
 		console.assert(data, 'No data found for path', path, 'with xpath', xpath);
