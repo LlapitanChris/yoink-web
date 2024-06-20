@@ -64,10 +64,12 @@ export default class CallChainPage extends baseClass {
 
 			console.assert(uuid, 'No UUID found on node');
 
+			const document = node.ownerDocument;
 			const resultType = XPathResult.ORDERED_NODE_ITERATOR_TYPE;
 
 			// find all the times this script is referenced
-			const callingElementsResultsArray = super.xpath(`//AddAction//ScriptReference[@UUID='${uuid}']`, resultType);
+			// const callingElementsResultsArray = super.xpath(`//AddAction//ScriptReference[@UUID='${uuid}']`, resultType);
+			const callingElementsResultsArray = document.querySelectorAll(`AddAction ScriptReference[UUID='${uuid}']`);
 			const callingElementsArray = [];
 
 			callingElementsResultsArray.forEach((element) => {
@@ -93,7 +95,8 @@ export default class CallChainPage extends baseClass {
 			});
 
 			// find all the times this script calls another script
-			const calledScriptsResultsArray = super.xpath(`//AddAction/StepsForScripts/Script/ScriptReference[@UUID="${uuid}"]/..//ScriptReference`, resultType);
+			// const calledScriptsResultsArray = super.xpath(`//AddAction/StepsForScripts/Script/ScriptReference[@UUID="${uuid}"]/..//ScriptReference`, resultType);
+			const calledScriptsResultsArray = document.querySelectorAll(`AddAction > StepsForScripts > Script > ScriptReference[UUID="${uuid}"] + ObjectList ScriptReference`);
 			const calledScriptsArray = [];
 			calledScriptsResultsArray.forEach((script) => {
 

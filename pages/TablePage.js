@@ -19,23 +19,23 @@ export default class TablePage extends baseClass {
 		},
 		'/custom-functions': {
 			title: 'Custom Function List',
-			xpath: `//AddAction/CustomFunctionsCatalog/ObjectList/CustomFunction`,
+			cssSelector: 'AddAction CustomFunctionsCatalog > ObjectList > CustomFunction',
 		},
 		'/file-access': {
 			title: 'File Access List',
-			xpath: `//AddAction//FileAccessCatalog/ObjectList/Authorization`,
+			cssSelector: 'AddAction FileAccessCatalog > ObjectList > Authorization',
 		},
 		'/privilege-sets': {
 			title: 'Privilege Set List',
-			xpath: `//AddAction//PrivilegeSetsCatalog/ObjectList/PrivilegeSet`,
+			cssSelector: 'AddAction PrivilegeSetsCatalog > ObjectList > PrivilegeSet',
 		},
 		'/extended-privileges': {
 			title: 'Extended Privilege List',
-			xpath: `//AddAction//ExtendedPrivilegesCatalog/ObjectList/ExtendedPrivilege`,
+			cssSelector: 'AddAction ExtendedPrivilegesCatalog > ObjectList > ExtendedPrivilege',
 		},
 		'/accounts': {
 			title: 'Account List',
-			xpath: `//AddAction//AccountsCatalog/ObjectList/Account`,
+			cssSelector: 'AddAction AccountsCatalog > ObjectList > Account',
 		}
 	}
 
@@ -53,8 +53,9 @@ export default class TablePage extends baseClass {
 
 		// get config data for the path
 		const xpath = TablePage.config[path]?.xpath || `//AddAction//${pascalCasePath}Catalog/${pascalCasePath}`;
+		const cssSelector = TablePage.config[path]?.cssSelector || `AddAction ${pascalCasePath}Catalog > ${pascalCasePath}`;
 		const title = TablePage.config[path]?.title || properName + ' List';
-		const data = super.xpath(xpath, XPathResult.ORDERED_NODE_ITERATOR_TYPE);
+		const data = TablePage.config[path]?.xpath ? super.xpath(xpath, XPathResult.ORDERED_NODE_ITERATOR_TYPE) : this.xmlDocument.querySelectorAll(cssSelector)
 
 		console.assert(data, 'No data found for path', path, 'with xpath', xpath);
 		console.assert(data.length, 'No data found for path', path, 'with xpath', xpath);

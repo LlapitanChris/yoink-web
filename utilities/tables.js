@@ -734,6 +734,8 @@ function scriptRowTemplate(script) {
 	const isMarker = script.getAttribute('isFolder') == "marker" ? true : false;
 	const type = isFolder ? 'Folder' : isMarker ? 'Marker' : 'Script';
 	const fullAccess = script.querySelector('Options').getAttribute('runwithfullaccess') == "True" ? 'Yes' : 'No';
+
+
 	return html`
 				<tr>
 					<td>
@@ -767,9 +769,9 @@ function accountsColumnsTemplate() {
 					<th></th>
 					<th>Name</th>
 					<th>Id</th>
+					<th>Privilege Set</th>
 					<th>Type</th>
 					<th>Enable</th>
-					<th>Privilege Set</th>
 					<th>Mod</th>
 					<th>Account</th>
 					<th>Timestamp</th>

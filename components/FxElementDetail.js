@@ -16,6 +16,7 @@ export default class FxElementDetail extends LitElement {
 			uuid: { type: String, reflect: true },
 			fmId: { type: String, reflect: true, attribute: 'fm-id' },
 			type: { type: String, reflect: true },
+			_whitespace: { type: String },
 		}
 	}
 
@@ -68,6 +69,7 @@ export default class FxElementDetail extends LitElement {
 			position: relative;
 			display: flex;
 			flex-direction: column;
+			gap: .5rem;
 		}
 
 		h2.section-title {
@@ -108,12 +110,20 @@ export default class FxElementDetail extends LitElement {
 			padding: 1rem;
 		}
 
-		fx-a {
-			padding: 0;
-			margin: 0;
+		.code {
+			font-family: monospace;
+			white-space: pre;
+			font-size: .9rem;
+			overflow: hidden;
 		}
 
 		`;
+	}
+
+	constructor() { 
+		super();
+		this._whitespace = 'pre';
+	
 	}
 
 	set node(value) {
@@ -289,7 +299,6 @@ export default class FxElementDetail extends LitElement {
 
 	}
 
-
 	// Value List
 	renderValueList() {
 		const resultType = XPathResult.ORDERED_NODE_ITERATOR_TYPE;
@@ -327,7 +336,52 @@ export default class FxElementDetail extends LitElement {
 				<label>Name: <span>${name}</span></label>
 				${primaryField ? html`<label>Primary Field: ${renderField(primaryField)}</label>` : ''}
 				${secondaryField ? html`<label>Secondary Field: ${renderField(secondaryField)}</label>` : ''}
-				${customValues ? html`<label>Custom Values: <div style='white-space: pre; padding-top: .5rem;'>${customValues}</div></label>` : ''}
+				${customValues ? html`<label>Custom Values: <div class='code' style='padding-top: .25rem;'>${customValues}</div></label>` : ''}
+			</section>
+		`;
+
+	}
+
+	// Custom Function
+	renderCustomFunction() {
+		const node = this.node;
+		const doc = node.ownerDocument;
+		const name = node.getAttribute('name');
+		const id = node.id;
+		const access = node.getAttribute('access');
+
+		const calc = doc.querySelector(`AddAction > CalcsForCustomFunctions > ObjectList > CustomFunctionCalc > CustomFunctionReference[UUID="${this.uuid}"] + Calculation`);
+		console.assert(calc, `No calculation found for Custom Function ${this.uuid}`);
+		const calcText = calc.querySelector('Text').textContent;
+
+
+
+		const updateWhitespace = (e) => { 
+			this._whitespace = e.target.value;
+		}
+
+		// make a dropdown of different whitespace options
+		const whitespaceOptions = html`
+			<select @change=${updateWhitespace}>
+				<option>pre</option>
+				<option>pre-wrap</option>
+				<option>pre-line</option>
+				<option>normal</option>
+				<option>nowrap</option>
+				<option>break-spaces</option>
+			</select>`
+
+		return html`
+			<section class='content-block'>
+				<h2 class='section-title'>Info</h2>
+				<label>Name: <span>${name}</span></label>
+				<label>Id: <span>${id}</span></label>
+				<label>Access: <span>${access}</span></label>
+			</section>
+			<section class='content-block'>
+				<h2 class='section-title'>Calculation</h2>
+				<label>Whitespace: ${whitespaceOptions}</label>
+				<div class='code' style='white-space: ${this._whitespace}'>${calcText}</div>
 			</section>
 		`;
 
